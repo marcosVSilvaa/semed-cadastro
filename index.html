@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pré-inscrição | Edital 01/2025 | SEMEC</title>
+  <style>
+    :root { --verde: #1f7a4d; --borda: #d5dde8; --fundo: #f3f6fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: var(--fundo); color: #1d2733; }
+    header { background: var(--verde); color: #fff; padding: 20px 16px; text-align: center; }
+    header h1 { margin: 0; font-size: 18px; }
+    header p { margin: 4px 0 0; font-size: 14px; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+    fieldset { background: #fff; border: 1px solid var(--borda); border-radius: 12px;
+               padding: 16px; margin: 0 0 14px; }
+    legend { font-weight: bold; color: var(--verde); padding: 0 8px; }
+    .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full { grid-column: 1 / -1; }
+    label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+    input { width: 100%; padding: 10px; border: 1px solid var(--borda);
+            border-radius: 8px; font-size: 15px; }
+    @media (max-width: 560px) { .grade { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
+  <p>Secretaria Municipal de Educação e Cultura</p>
+  <p>Processo Seletivo Simplificado – Edital 01/2025 | Assistente Educacional MAE-A</p>
+</header>
+
+<div class="wrap">
+  <form id="form" novalidate>
+
+    <fieldset>
+      <legend>1. Identificação do candidato</legend>
+      <div class="grade">
+        <div class="full">
+          <label for="nome">Nome completo *</label>
+          <input type="text" id="nome">
+        </div>
+        <div>
+          <label for="rg">RG *</label>
+          <input type="text" id="rg">
+        </div>
+        <div>
+          <label for="cpf">CPF *</label>
+          <input type="text" id="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00">
+        </div>
+        <div>
+          <label for="titulo">Título de eleitor *</label>
+          <input type="text" id="titulo" inputmode="numeric">
+        </div>
+        <div>
+          <label for="nascimento">Data de nascimento *</label>
+          <input type="date" id="nascimento">
+        </div>
+        <div>
+          <label for="telefone">Telefone *</label>
+          <input type="tel" id="telefone" maxlength="15" placeholder="(00) 00000-0000">
+        </div>
+        <div>
+          <label for="recado">Telefone para recado</label>
+          <input type="tel" id="recado" maxlength="15" placeholder="(00) 00000-0000">
+        </div>
+        <div class="full">
+          <label for="endereco">Endereço completo *</label>
+          <input type="text" id="endereco">
+        </div>
+        <div>
+          <label for="municipio">Município *</label>
+          <input type="text" id="municipio">
+        </div>
+        <div>
+          <label for="uf">UF *</label>
+          <input type="text" id="uf" maxlength="2" value="MG">
+        </div>
+        <div class="full">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email">
+        </div>
+      </div>
+    </fieldset>
+
+  </form>
+</div>
+
+</body>
+</html>
