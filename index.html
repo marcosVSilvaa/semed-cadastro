@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pré-inscrição | Edital 01/2025 | SEMEC</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     
     :root { --verde: #1f7a4d; --borda: #d5dde8; --fundo: #f3f6fa; }
@@ -65,6 +66,15 @@ input[type=checkbox] { width: auto; }
 .pontos .total { font-size: 16px; }
 
     .grade input[type=number] { appearance: textfield; }
+    .decl { display: flex; gap: 10px; align-items: flex-start; font-weight: normal;
+        font-size: 14px; cursor: pointer; }
+.decl input { margin-top: 3px; }
+.erro { border-color: #d64545 !important; background: #fff6f6; }
+.acoes { margin: 18px 0 8px; }
+.btn-gerar { width: 100%; border: 0; border-radius: 10px; padding: 14px 16px; font-size: 16px;
+             font-weight: bold; cursor: pointer; color: #fff; background: var(--verde); }
+.btn-gerar:hover { filter: brightness(1.08); }
+.nota { font-size: 13px; color: #5d6b7c; text-align: center; margin: 10px 0 0; }
     
   </style>
 </head>
@@ -248,6 +258,21 @@ input[type=checkbox] { width: auto; }
         <span class="total">Pontuação total declarada: <strong id="ptsTotal">0</strong> pontos</span>
       </div>
     </fieldset>
+        <fieldset>
+      <legend>6. Declaração</legend>
+      <label class="decl">
+        <input type="checkbox" id="declaracao">
+        <span>Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
+          Simplificado nº 01/2025 e declaro que as informações prestadas são verdadeiras, ciente de
+          que serão comprovadas na convocação e de que a falsidade implica eliminação.</span>
+      </label>
+    </fieldset>
+
+    <div class="acoes">
+      <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
+      <p class="nota">Depois de gerar, <strong>imprima e assine</strong> as fichas e entregue
+        pessoalmente, em envelope lacrado, junto com os documentos.</p>
+    </div>
     
   </form>
 </div>
@@ -337,9 +362,11 @@ const PONTOS = {
 };
 
 /* ---- Experiência (Anexo IV) ---- */
-const CONFIG = { dataCorte: "31/10/2025" };   // troque se o edital mudar
-const DIAS_POR_PONTO = 30;
-const EXPERIENCIA_MAX = 36;
+const CONFIG = {
+  dataCorte: "31/10/2025",
+  mesAno: "novembro de 2025",
+  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação e Cultura), nos dias 25 e 26 de novembro de 2025, das 08h às 16h."
+};
 
 document.querySelectorAll(".dataCorte").forEach((el) => (el.textContent = CONFIG.dataCorte));
 
@@ -378,6 +405,103 @@ function atualizarPontos() {
 $("form").addEventListener("change", atualizarPontos);
 $("form").addEventListener("input", atualizarPontos);
 atualizarPontos();
+  /* ---- Validação ---- */
+const OBRIGATORIOS = ["nome", "rg", "cpf", "titulo", "nascimento", "telefone",
+                      "endereco", "municipio", "uf", "email"];
+
+function cpfValido(cpf) {
+  cpf = cpf.replace(/\D/g, "");
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  for (let t = 9; t < 11; t++) {
+    let soma = 0;
+    for (let i = 0; i < t; i++) soma += parseInt(cpf[i]) * (t + 1 - i);
+    const dig = ((soma * 10) % 11) % 10;
+    if (dig !== parseInt(cpf[t])) return false;
+  }
+  return true;
+}
+
+function validar() {
+  const erros = [];
+  document.querySelectorAll(".erro").forEach((el) => el.classList.remove("erro"));
+
+  OBRIGATORIOS.forEach((id) => {
+    if (!$(id).value.trim()) $(id).classList.add("erro");
+  });
+  if (OBRIGATORIOS.some((id) => !$(id).value.trim())) {
+    erros.push("Preencha os campos destacados em vermelho (seção 1).");
+  }
+  if ($("cpf").value && !cpfValido($("cpf").value)) {
+    $("cpf").classList.add("erro");
+    erros.push("CPF inválido.");
+  }
+  if ($("email").value && !/^\S+@\S+\.\S+$/.test($("email").value)) {
+    $("email").classList.add("erro");
+    erros.push("E-mail inválido.");
+  }
+
+  const pcd = document.querySelector('input[name="pcd"]:checked');
+  if (!pcd) {
+    erros.push("Informe se é portador de necessidades especiais (seção 2).");
+  } else if (pcd.value === "Sim" && !document.querySelector('input[name="tipoPcd"]:checked')) {
+    erros.push("Marque o tipo de necessidade especial (seção 2).");
+  }
+
+  const faltaResposta = REQUISITOS.some((_, i) => !document.querySelector('input[name="req' + i + '"]:checked'));
+  if (!atendeRequisitos()) {
+    erros.push("Pelas respostas da seção 3, você não atende aos requisitos do edital.");
+  } else if (faltaResposta) {
+    erros.push("Responda todos os requisitos da seção 3.");
+  }
+
+  if (!$("declaracao").checked) erros.push("Marque a declaração da seção 6.");
+  return erros;
+}
+
+/* ---- Coleta os dados do formulário ---- */
+function coletar() {
+  const d = {};
+  OBRIGATORIOS.forEach((id) => (d[id] = $(id).value.trim()));
+  d.recado = $("recado").value.trim();
+  d.pcd = document.querySelector('input[name="pcd"]:checked').value;
+  d.tiposPcd = Array.from(document.querySelectorAll('input[name="tipoPcd"]:checked')).map((c) => c.value);
+  d.requisitos = REQUISITOS.map((r, i) => ({
+    texto: r.texto,
+    resposta: document.querySelector('input[name="req' + i + '"]:checked').value
+  }));
+  d.doutorado = $("doutorado").checked;
+  d.mestrado = $("mestrado").checked;
+  d.pos = $("pos").checked;
+  d.curso1 = Number($("curso1").value);
+  d.curso2 = Number($("curso2").value);
+  d.curso3 = Number($("curso3").value);
+  d.diasEF = lerDias("diasEF");
+  d.diasOutroMun = lerDias("diasOutroMun");
+  d.diasEstadual = lerDias("diasEstadual");
+  d.diasPrivada = lerDias("diasPrivada");
+  d.pontos = calcularPontos();
+  return d;
+}
+
+function nomeSeguro(nome) {
+  return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "_");
+}
+
+/* ---- Botão ---- */
+$("btnGerar").addEventListener("click", () => {
+  const erros = validar();
+  if (erros.length) {
+    alert(erros.join("\n"));
+    return;
+  }
+  if (!window.jspdf) {
+    alert("Não foi possível carregar o gerador de PDF. Verifique a internet e recarregue a página.");
+    return;
+  }
+  const d = coletar();
+  const doc = gerarPdf(d);
+  doc.save("Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf");
+});
   
 </script>
   
