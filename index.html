@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pré-inscrição | Edital 01/2025 | SEMEC</title>
   <style>
+    
     :root { --verde: #1f7a4d; --borda: #d5dde8; --fundo: #f3f6fa; }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, sans-serif; background: var(--fundo); color: #1d2733; }
@@ -21,6 +22,34 @@
     input { width: 100%; padding: 10px; border: 1px solid var(--borda);
             border-radius: 8px; font-size: 15px; }
     @media (max-width: 560px) { .grade { grid-template-columns: 1fr; } }
+
+     select, input[type=checkbox] { font-size: 15px; }
+input[type=checkbox] { width: auto; }
+
+.opcoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.opcoes label { margin: 0; cursor: pointer; border: 1px solid var(--borda);
+                padding: 6px 14px; border-radius: 99px; font-size: 13px; user-select: none; }
+.opcoes input { display: none; }
+.opcoes label:has(input[value="Sim"]:checked) { background: #1f8a5b; color: #fff; border-color: #1f8a5b; }
+.opcoes label:has(input[value="Não"]:checked) { background: #c0392b; color: #fff; border-color: #c0392b; }
+.opcoes label:has(input[value="Não se aplica"]:checked) { background: #6b7a90; color: #fff; border-color: #6b7a90; }
+
+.req { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+       padding: 10px 0; border-bottom: 1px solid #edf1f6; }
+.req:last-child { border-bottom: 0; }
+.req .txt { flex: 1; font-size: 14px; }
+
+.aviso { background: #fff8e1; border: 1px solid #f1dc9a; border-radius: 10px;
+         padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
+.bloqueio { display: none; background: #fdecea; border: 1px solid #f1a9a0; border-radius: 10px;
+            padding: 12px; font-size: 14px; margin-top: 12px; color: #8a1f14; }
+.bloqueio.ativo { display: block; }
+
+#tiposPcd { display: none; margin-top: 12px; }
+#tiposPcd.ativo { display: block; }
+#tiposPcd label { font-weight: normal; display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+
+    @media (max-width: 560px) { .req { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
 <body>
@@ -83,9 +112,119 @@
         </div>
       </div>
     </fieldset>
+        <fieldset>
+      <legend>2. Portador de necessidades especiais</legend>
+      <div class="opcoes">
+        <label><input type="radio" name="pcd" value="Sim"><span>Sim</span></label>
+        <label><input type="radio" name="pcd" value="Não"><span>Não</span></label>
+      </div>
+
+      <div id="tiposPcd">
+        <p style="font-size:14px;margin:0 0 8px"><strong>Se sim, qual?</strong></p>
+        <label><input type="checkbox" name="tipoPcd" value="Alta habilidade"> Alta habilidade</label>
+        <label><input type="checkbox" name="tipoPcd" value="Física"> Física</label>
+        <label><input type="checkbox" name="tipoPcd" value="Auditiva"> Auditiva</label>
+        <label><input type="checkbox" name="tipoPcd" value="Visual"> Visual</label>
+        <label><input type="checkbox" name="tipoPcd" value="Múltiplas habilidades"> Múltiplas habilidades</label>
+        <label><input type="checkbox" name="tipoPcd" value="Mental/intelectual"> Mental/intelectual</label>
+        <label><input type="checkbox" name="tipoPcd" value="Condutas típicas"> Condutas típicas</label>
+        <div class="aviso" style="margin-top:10px">
+          Candidatos com deficiência devem entregar, junto com a inscrição, o atestado médico
+          conforme o <strong>Anexo VIII</strong> do edital.
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>3. Requisitos para inscrição</legend>
+      <div class="aviso">
+        Marque <strong>Sim</strong> apenas se atende ao item. Você deverá comprovar tudo com
+        documentos na convocação. Quem não comprovar é eliminado.
+      </div>
+      <div id="listaReq"></div>
+      <div class="bloqueio" id="bloqueio">
+        <strong>Atenção:</strong> pelas suas respostas, você não atende a todos os requisitos do
+        item 3.2 do edital e não poderá se inscrever neste processo seletivo.
+      </div>
+    </fieldset>
 
   </form>
 </div>
+  
+<script>
+const $ = (id) => document.getElementById(id);
 
+/* Requisitos do item 3.2 do edital (e formação do item 6.1) */
+const REQUISITOS = [
+  { texto: "Sou brasileiro(a) nato(a) ou naturalizado(a), nos termos da Constituição Federal." },
+  { texto: "Possuo Ensino Superior em Pedagogia ou Normal Superior, com Especialização em Educação Especial (item 6.1)." },
+  { texto: "Conheço as exigências deste edital e estou de acordo com elas." },
+  { texto: "Não me enquadro na vedação de acúmulo de cargos (art. 37, XVI, da Constituição Federal)." },
+  { texto: "Estou em dia com as obrigações eleitorais." },
+  { texto: "Candidatos do sexo masculino: estou em dia com as obrigações do serviço militar.", naoSeAplica: true },
+  { texto: "Não fui demitido(a) por justa causa na administração pública direta ou indireta, nem sofri penalidade no exercício de cargo público." },
+  { texto: "Não fui condenado(a) por crime, em especial os previstos nos arts. 121 a 154-B, 213 a 234-C, 248 e 249 do Decreto-Lei nº 2.848/1940." }
+];
+
+/* ---- Monta a lista de requisitos na tela ---- */
+function montarRequisitos() {
+  const box = $("listaReq");
+  REQUISITOS.forEach((r, i) => {
+    let opcoes =
+      '<label><input type="radio" name="req' + i + '" value="Sim"><span>Sim</span></label>' +
+      '<label><input type="radio" name="req' + i + '" value="Não"><span>Não</span></label>';
+    if (r.naoSeAplica) {
+      opcoes += '<label><input type="radio" name="req' + i + '" value="Não se aplica"><span>Não se aplica</span></label>';
+    }
+    const div = document.createElement("div");
+    div.className = "req";
+    div.innerHTML = '<span class="txt">' + r.texto + '</span><div class="opcoes">' + opcoes + '</div>';
+    box.appendChild(div);
+  });
+}
+montarRequisitos();
+
+/* ---- Bloqueio: qualquer "Não" impede a inscrição ---- */
+function atendeRequisitos() {
+  const bloqueado = REQUISITOS.some((_, i) => {
+    const marcado = document.querySelector('input[name="req' + i + '"]:checked');
+    return marcado && marcado.value === "Não";
+  });
+  $("bloqueio").classList.toggle("ativo", bloqueado);
+  return !bloqueado;
+}
+$("listaReq").addEventListener("change", atendeRequisitos);
+
+/* ---- Necessidades especiais: mostra a lista só se marcar "Sim" ---- */
+document.querySelectorAll('input[name="pcd"]').forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const sim = document.querySelector('input[name="pcd"]:checked').value === "Sim";
+    $("tiposPcd").classList.toggle("ativo", sim);
+    if (!sim) {
+      document.querySelectorAll('input[name="tipoPcd"]').forEach((c) => (c.checked = false));
+    }
+  });
+});
+
+/* ---- Máscaras ---- */
+$("cpf").addEventListener("input", (e) => {
+  let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+  v = v.replace(/(\d{3})(\d)/, "$1.$2")
+       .replace(/(\d{3})(\d)/, "$1.$2")
+       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  e.target.value = v;
+});
+
+function mascaraTelefone(e) {
+  let v = e.target.value.replace(/\D/g, "").slice(0, 11);
+  if (v.length > 10)     v = v.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+  else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+  else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/, "($1) $2");
+  e.target.value = v;
+}
+$("telefone").addEventListener("input", mascaraTelefone);
+$("recado").addEventListener("input", mascaraTelefone);
+</script>
+  
 </body>
 </html>
