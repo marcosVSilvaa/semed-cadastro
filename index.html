@@ -50,6 +50,22 @@ input[type=checkbox] { width: auto; }
 #tiposPcd label { font-weight: normal; display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
 
     @media (max-width: 560px) { .req { flex-direction: column; align-items: flex-start; } }
+
+    select { width: 100%; padding: 10px; border: 1px solid var(--borda);
+         border-radius: 8px; font-size: 15px; background: #fff; }
+
+.sub { margin: 16px 0 8px; font-size: 14px; color: var(--verde); }
+.sub:first-of-type { margin-top: 0; }
+.check label { display: flex; gap: 8px; align-items: center; font-weight: normal;
+               font-size: 14px; margin-bottom: 8px; }
+.check em { color: #5d6b7c; font-style: normal; font-size: 13px; }
+
+.pontos { background: #e8f6ee; border: 1px solid #a8dcc0; border-radius: 10px;
+          padding: 12px; font-size: 14px; margin-top: 14px; line-height: 1.7; }
+.pontos .total { font-size: 16px; }
+
+    .grade input[type=number] { appearance: textfield; }
+    
   </style>
 </head>
 <body>
@@ -147,7 +163,92 @@ input[type=checkbox] { width: auto; }
         item 3.2 do edital e não poderá se inscrever neste processo seletivo.
       </div>
     </fieldset>
+    <fieldset>
+      <legend>4. Cursos e graduação (Anexo IV)</legend>
+      <div class="aviso">
+        Declare <strong>somente</strong> o que você consegue comprovar com certificado ou diploma.
+        Cada título vale uma única vez e precisa ter <strong>carga horária</strong>.
+        A pós-graduação usada como requisito mínimo do cargo <strong>não</strong> conta aqui.
+      </div>
 
+      <h3 class="sub">Graduação e pós-graduação na área da Educação</h3>
+      <div class="check">
+        <label><input type="checkbox" id="doutorado"> Doutorado em Educação <em>(10 pontos)</em></label>
+        <label><input type="checkbox" id="mestrado"> Mestrado em Educação <em>(7 pontos)</em></label>
+        <label><input type="checkbox" id="pos"> Pós-graduação com no mínimo 360h na área da Educação <em>(5 pontos)</em></label>
+      </div>
+
+      <h3 class="sub">Cursos de capacitação (formação continuada, últimos 5 anos)</h3>
+      <div class="grade">
+        <div class="full">
+          <label for="curso1">De 25 a 100 horas (1 ponto cada)</label>
+          <select id="curso1">
+            <option value="0">Nenhum</option>
+            <option value="1">1 certificado</option>
+            <option value="2">2 certificados</option>
+            <option value="3">3 certificados</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="curso2">De 101 a 180 horas (2 pontos cada)</label>
+          <select id="curso2">
+            <option value="0">Nenhum</option>
+            <option value="1">1 certificado</option>
+            <option value="2">2 certificados</option>
+            <option value="3">3 certificados</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="curso3">Acima de 181 horas (3 pontos cada)</label>
+          <select id="curso3">
+            <option value="0">Nenhum</option>
+            <option value="1">1 certificado</option>
+            <option value="2">2 certificados</option>
+            <option value="3">3 certificados</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pontos">
+        Graduação e pós-graduação: <strong id="ptsTitulos">0</strong> pontos<br>
+        Cursos de capacitação: <strong id="ptsCursos">0</strong> pontos<br>
+        <span class="total">Subtotal: <strong id="ptsSub">0</strong> pontos</span>
+      </div>
+    </fieldset>
+        <fieldset>
+      <legend>5. Experiência profissional no cargo</legend>
+      <div class="aviso">
+        Informe os <strong>dias</strong> trabalhados como <strong>contratado ou designado</strong>,
+        somente no cargo pleiteado, contados até <strong class="dataCorte"></strong>.
+        <strong>Não valem</strong> estágio, monitoria, bolsa de estudos, atividades voluntárias
+        nem tempo de efetivo.
+      </div>
+      <div class="grade">
+        <div>
+          <label for="diasEF">Municipal de Espera Feliz (dias)</label>
+          <input type="number" id="diasEF" min="0" inputmode="numeric" placeholder="0">
+        </div>
+        <div>
+          <label for="diasOutroMun">Municipal de outro município (dias)</label>
+          <input type="number" id="diasOutroMun" min="0" inputmode="numeric" placeholder="0">
+        </div>
+        <div>
+          <label for="diasEstadual">Estadual (dias)</label>
+          <input type="number" id="diasEstadual" min="0" inputmode="numeric" placeholder="0">
+        </div>
+        <div>
+          <label for="diasPrivada">Iniciativa privada (dias)</label>
+          <input type="number" id="diasPrivada" min="0" inputmode="numeric" placeholder="0">
+        </div>
+      </div>
+
+      <div class="pontos">
+        Total de dias informados: <strong id="ptsDias">0</strong><br>
+        Pontos de experiência: <strong id="ptsExp">0</strong> <small>(máximo 36)</small><br>
+        <span class="total">Pontuação total declarada: <strong id="ptsTotal">0</strong> pontos</span>
+      </div>
+    </fieldset>
+    
   </form>
 </div>
   
@@ -224,6 +325,60 @@ function mascaraTelefone(e) {
 }
 $("telefone").addEventListener("input", mascaraTelefone);
 $("recado").addEventListener("input", mascaraTelefone);
+
+  /* ---- Pontuação (Anexo IV) ---- */
+const PONTOS = {
+  doutorado: 10,
+  mestrado: 7,
+  pos: 5,
+  curso1: 1,   // 25 a 100h
+  curso2: 2,   // 101 a 180h
+  curso3: 3    // acima de 181h
+};
+
+/* ---- Experiência (Anexo IV) ---- */
+const CONFIG = { dataCorte: "31/10/2025" };   // troque se o edital mudar
+const DIAS_POR_PONTO = 30;
+const EXPERIENCIA_MAX = 36;
+
+document.querySelectorAll(".dataCorte").forEach((el) => (el.textContent = CONFIG.dataCorte));
+
+function lerDias(id) {
+  const n = parseInt($(id).value, 10);
+  return isNaN(n) || n < 0 ? 0 : n;
+}
+
+function calcularPontos() {
+  let titulos = 0;
+  if ($("doutorado").checked) titulos += PONTOS.doutorado;
+  if ($("mestrado").checked)  titulos += PONTOS.mestrado;
+  if ($("pos").checked)       titulos += PONTOS.pos;
+
+  const cursos =
+    Number($("curso1").value) * PONTOS.curso1 +
+    Number($("curso2").value) * PONTOS.curso2 +
+    Number($("curso3").value) * PONTOS.curso3;
+
+  const dias = lerDias("diasEF") + lerDias("diasOutroMun") +
+               lerDias("diasEstadual") + lerDias("diasPrivada");
+  const experiencia = Math.min(Math.floor(dias / DIAS_POR_PONTO), EXPERIENCIA_MAX);
+
+  return { titulos, cursos, dias, experiencia, total: titulos + cursos + experiencia };
+}
+
+function atualizarPontos() {
+  const p = calcularPontos();
+  $("ptsTitulos").textContent = p.titulos;
+  $("ptsCursos").textContent = p.cursos;
+  $("ptsSub").textContent = p.titulos + p.cursos;
+  $("ptsDias").textContent = p.dias;
+  $("ptsExp").textContent = p.experiencia;
+  $("ptsTotal").textContent = p.total;
+}
+$("form").addEventListener("change", atualizarPontos);
+$("form").addEventListener("input", atualizarPontos);
+atualizarPontos();
+  
 </script>
   
 </body>
