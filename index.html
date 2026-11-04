@@ -849,22 +849,49 @@ function dataBR(iso) {
 const marca = (b) => (b ? "( X )" : "(   )");
 const qtd = (n) => [marca(n === 1) + " 01 - um", marca(n === 2) + " 02 - dois", marca(n === 3) + " 03 - três"];
 
+/* ---- Logos do cabeçalho do PDF (lidas das imagens já carregadas na página) ---- */
+function dadosLogo(seletor) {
+  const img = document.querySelector(seletor);
+  if (!img || !img.complete || !img.naturalWidth) return null;
+  try {
+    const c = document.createElement("canvas");
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    c.getContext("2d").drawImage(img, 0, 0);
+    return { data: c.toDataURL("image/png"), w: img.naturalWidth, h: img.naturalHeight };
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
 function gerarPdf(d, numero) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const L = 15, R = 195, W = 180;
-  let y = 0;
+  const logoEsq = dadosLogo(".topo > .logo:first-child img");
+  const logoDir = dadosLogo(".topo > .logo:last-child img");
 
   /* ---- utilitários ---- */
-  function normal(t, x, yy, o) { doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.text(t, x, yy, o); }
-  function negrito(t, x, yy, o) { doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.text(t, x, yy, o); }
+  function normal(t, x, yy, o, tam) { doc.setFont("helvetica", "normal"); doc.setFontSize(tam || 10); doc.text(t, x, yy, o); }
+  function negrito(t, x, yy, o, tam) { doc.setFont("helvetica", "bold"); doc.setFontSize(tam || 10); doc.text(t, x, yy, o); }
+
+  function colocarLogo(logo, xCentro, alias) {
+    if (!logo) return;
+    const caixaW = 36, caixaH = 22;
+    const esc = Math.min(caixaW / logo.w, caixaH / logo.h);
+    const w = logo.w * esc, h = logo.h * esc;
+    doc.addImage(logo.data, "PNG", xCentro - w / 2, 7 + (caixaH - h) / 2, w, h, alias, "FAST");
+  }
 
   function cabecalho() {
+    colocarLogo(logoEsq, L + 18, "logoSemed");
+    colocarLogo(logoDir, R - 18, "logoPrefeitura");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(11);
+    doc.setFontSize(10.5);
     doc.text("PREFEITURA MUNICIPAL DE ESPERA FELIZ - MG", 105, 14, { align: "center" });
     doc.text("SECRETARIA MUNICIPAL DE EDUCAÇÃO", 105, 20, { align: "center" });
-    doc.setFontSize(10);
+    doc.setFontSize(9.5);
     doc.text("PROCESSO SELETIVO SIMPLIFICADO - EDITAL 01/2026", 105, 26, { align: "center" });
     doc.setDrawColor(31, 122, 77);
     doc.setLineWidth(0.6);
@@ -894,22 +921,6 @@ function gerarPdf(d, numero) {
     doc.line(xv, yy + 1.2, x + largura, yy + 1.2);
   }
 
-  function paragrafo(t, x, largura, estilo) {
-    doc.setFont("helvetica", estilo || "normal");
-    doc.setFontSize(10);
-    doc.splitTextToSize(t, largura).forEach((linha) => {
-      if (y > 280) {
-        doc.addPage();
-        cabecalho();
-        y = 40;
-        doc.setFont("helvetica", estilo || "normal");
-        doc.setFontSize(10);
-      }
-      doc.text(linha, x, y);
-      y += 5;
-    });
-  }
-
   /* ---------- Página 1: Anexo III ---------- */
   cabecalho();
   titulo("ANEXO III", 40);
@@ -927,34 +938,30 @@ function gerarPdf(d, numero) {
   negrito("FICHA DE INSCRIÇÃO PARA PROCESSO SELETIVO SIMPLIFICADO", 105, 64, { align: "center" });
   negrito("ASSISTENTE EDUCACIONAL MAE - A", 105, 69.5, { align: "center" });
 
-  doc.rect(L, 71, W, 142);
-  negrito("IDENTIFICAÇÃO DO (A) CANDIDATO (A):", L + 3, 79);
-  campo("Nome", d.nome, L + 3, 89, 174);
-  campo("RG", d.rg, L + 3, 99, 84);
-  campo("CPF", d.cpf, L + 93, 99, 84);
-  campo("Título de Eleitor", d.titulo, L + 3, 109, 174);
-  campo("Data de nascimento", dataBR(d.nascimento), L + 3, 119, 84);
-  campo("Telefone", d.telefone, L + 93, 119, 84);
-  campo("Endereço", d.endereco, L + 3, 129, 174);
-  campo("Município", d.municipio, L + 3, 139, 84);
-  campo("UF", d.uf.toUpperCase(), L + 93, 139, 84);
-  campo("E-mail", d.email, L + 3, 149, 174);
-  campo("Telefone para recado", d.recado, L + 3, 159, 174);
+  doc.rect(L, 71, W, 127);
+  negrito("IDENTIFICAÇÃO DO (A) CANDIDATO (A):", L + 3, 78);
+  campo("Nome", d.nome, L + 3, 86, 174);
+  campo("RG", d.rg, L + 3, 94, 84);
+  campo("CPF", d.cpf, L + 93, 94, 84);
+  campo("Título de Eleitor", d.titulo, L + 3, 102, 174);
+  campo("Data de nascimento", dataBR(d.nascimento), L + 3, 110, 84);
+  campo("Telefone", d.telefone, L + 93, 110, 84);
+  campo("Endereço", d.endereco, L + 3, 118, 174);
+  campo("Município", d.municipio, L + 3, 126, 84);
+  campo("UF", d.uf.toUpperCase(), L + 93, 126, 84);
+  campo("E-mail", d.email, L + 3, 134, 174);
+  campo("Telefone para recado", d.recado, L + 3, 142, 174);
 
   doc.setFillColor(225, 225, 225);
-  doc.rect(L, 166, W, 8, "FD");
-  negrito("PORTADOR DE NECESSIDADES ESPECIAIS", 105, 171.5, { align: "center" });
-  doc.line(L + 45, 174, L + 45, 213);
-  normal(marca(d.pcd === "Sim") + " SIM", L + 8, 186);
-  normal(marca(d.pcd === "Não") + " NÃO", L + 8, 196);
-  normal("Se sim, qual?", L + 48, 179);
+  doc.rect(L, 148, W, 8, "FD");
+  negrito("PORTADOR DE NECESSIDADES ESPECIAIS", 105, 153.5, { align: "center" });
+  normal(marca(d.pcd === "Sim") + " SIM            " + marca(d.pcd === "Não") + " NÃO", 105, 164, { align: "center" });
+  negrito("Se sim, qual?", L + 8, 172);
   const tipos = Array.from(document.querySelectorAll('input[name="tipoPcd"]')).map((c) => c.value);
-  tipos.forEach((t, i) => normal(marca(d.tiposPcd.includes(t)) + " " + t, L + 48, 184 + i * 4));
-
-  normal("Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo nº 01/2026.", L, 224);
-  normal("Ciente ____/____/_____", L, 236);
-  doc.line(L + 20, 256, R - 20, 256);
-  normal("Assinatura do candidato (legível e por extenso)", 105, 261, { align: "center" });
+  tipos.forEach((t, i) => {
+    const col = i % 3, lin = Math.floor(i / 3);
+    normal(marca(d.tiposPcd.includes(t)) + " " + t, L + 8 + col * 58, 179 + lin * 6.5);
+  });
 
   /* ---------- Página 2: Anexo IV ---------- */
   doc.addPage();
@@ -967,11 +974,11 @@ function gerarPdf(d, numero) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(fs);
     while (doc.getTextWidth(t) > W && fs > 6) { fs -= 0.5; doc.setFontSize(fs); }
-    doc.text(t, L, 53);
+    doc.text(t, L, 52);
   })();
 
-  const colX = [L, L + 78, L + 106, L + 158];
-  const colW = [78, 28, 52, 22];
+  const colX = [L, L + 74, L + 106, L + 158];
+  const colW = [74, 32, 52, 22];
 
   function celula(i, y0, h, linhas, o) {
     o = o || {};
@@ -986,121 +993,83 @@ function gerarPdf(d, numero) {
   }
   function faixa(y0, t) {
     doc.setFillColor(215, 215, 215);
-    doc.rect(L, y0, W, 7, "FD");
-    negrito(t, 105, y0 + 5, { align: "center" });
+    doc.rect(L, y0, W, 6, "FD");
+    negrito(t, 105, y0 + 4.3, { align: "center" });
   }
   function linhaTab(y0, h, desc, valor, quant, pts) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
-    celula(0, y0, h, doc.splitTextToSize(desc, 75));
+    celula(0, y0, h, doc.splitTextToSize(desc, 71));
     celula(1, y0, h, valor, { center: true });
     celula(2, y0, h, quant);
     celula(3, y0, h, [String(pts)], { center: true, bold: true });
   }
 
-  faixa(58, "CURSOS E GRADUAÇÃO");
-  celula(0, 65, 10, [""]);
-  celula(1, 65, 10, ["VALOR"], { center: true, bold: true });
-  celula(2, 65, 10, ["QUANTITATIVO DE TÍTULOS"], { center: true, bold: true });
-  celula(3, 65, 10, ["PONTUAÇÃO", "TOTAL"], { center: true, bold: true });
+  /* Cursos */
+  faixa(56, "CURSOS");
+  celula(0, 62, 11, [""]);
+  celula(1, 62, 11, ["VALOR"], { center: true, bold: true });
+  celula(2, 62, 11, ["QUANTITATIVO DE TÍTULOS"], { center: true, bold: true });
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7);
+  doc.text("(Será considerado apenas certificados)", colX[2] + colW[2] / 2, 62 + 8.6, { align: "center" });
+  celula(3, 62, 11, ["PONTUAÇÃO", "TOTAL"], { center: true, bold: true });
 
-  linhaTab(75, 10, "Doutorado em Educação. Será considerado apenas um (01).",
+  linhaTab(73, 11, "Doutorado em Educação. Será considerado apenas um (01).",
            ["10 pontos"], [marca(d.doutorado) + " 01 - um"], d.doutorado ? PONTOS.doutorado : 0);
-  linhaTab(85, 10, "Mestrado em Educação. Será considerado apenas um (01).",
+  linhaTab(84, 11, "Mestrado em Educação. Será considerado apenas um (01).",
            ["07 pontos"], [marca(d.mestrado) + " 01 - um"], d.mestrado ? PONTOS.mestrado : 0);
-  linhaTab(95, 26, "Pós-graduação com duração mínima de 360h na área da Educação. Será considerada apenas uma (01) dentro da área pleiteada. Não será computada pós-graduação referente ao Requisito Mínimo do Cargo.",
+  linhaTab(95, 23, "Pós-graduação com duração mínima de 360h na área da Educação. Será considerada apenas uma (01) dentro da área pleiteada. Não será computada pós-graduação referente ao Requisito Mínimo do Cargo.",
            ["05 pontos"], [marca(d.pos) + " 01 - um"], d.pos ? PONTOS.pos : 0);
 
-  faixa(121, "CURSOS DE CAPACITAÇÃO");
-  linhaTab(128, 18, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária de 25 a 100 horas.",
+  /* Cursos de capacitação */
+  faixa(118, "CURSOS DE CAPACITAÇÃO");
+  linhaTab(124, 15, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária de 25 a 100 horas.",
            ["01 ponto", "(até 03 certificados)"], qtd(d.curso1), d.curso1 * PONTOS.curso1);
-  linhaTab(146, 18, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária de 101 a 180 horas.",
+  linhaTab(139, 15, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária de 101 a 180 horas.",
            ["02 pontos", "(até 03 certificados)"], qtd(d.curso2), d.curso2 * PONTOS.curso2);
-  linhaTab(164, 18, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária acima de 181 horas.",
+  linhaTab(154, 15, "Formação Continuada na área da Educação nos últimos 05 (cinco) anos, com carga horária acima de 181 horas.",
            ["03 pontos", "(até 03 certificados)"], qtd(d.curso3), d.curso3 * PONTOS.curso3);
 
-  faixa(182, "EXPERIÊNCIA PROFISSIONAL NA ÁREA PLEITEADA");
-  linhaTab(189, 24, "Experiência profissional de acordo com o cargo pleiteado. (ATÉ 3 ANOS)",
+  /* Experiência profissional */
+  faixa(169, "EXPERIÊNCIA PROFISSIONAL NA ÁREA PLEITEADA");
+  linhaTab(175, 21, "Para fins de pontuação será computado experiência profissional de acordo com o cargo pleiteado (até 3 anos) 36 meses trabalhados.",
            ["01 ponto", "(a cada trinta dias)"],
            ["O limite de pontuação", "a ser colocado no quadro", "ao lado não deve exceder", "a 36 (trinta e seis) pontos."],
            d.pontos.experiencia);
 
-  doc.rect(L, 213, W, 40);
+  negrito("Para fins de desempate.", L, 202);
+  normal("O tempo a ser computado é referente ao cargo de Assistente Educacional.", L, 207, undefined, 9);
+  doc.rect(L, 210, W, 30);
   const base = "Tempo de experiência profissional no cargo pleiteado ";
-  normal(base + "na esfera Municipal de Espera Feliz: " + d.diasEF + " dias.", L + 3, 222);
-  normal(base + "na esfera Municipal em outro município: " + d.diasOutroMun + " dias.", L + 3, 229.5);
-  normal(base + "na esfera Estadual: " + d.diasEstadual + " dias.", L + 3, 237);
-  normal(base + "na iniciativa Privada: " + d.diasPrivada + " dias.", L + 3, 244.5);
-  doc.setFont("helvetica", "italic");
-  doc.setFontSize(7.5);
-  doc.text("Pontuam apenas os dias na esfera Municipal de Espera Feliz, referentes aos últimos 36 meses trabalhados (1 ponto a cada 30", L + 3, 247.8);
-  doc.text("dias completos, apenas números inteiros). As demais esferas são informadas somente para fins de desempate.", L + 3, 251);
+  normal(base + "na esfera Municipal de Espera Feliz: " + d.diasEF + " dias.", L + 3, 216.5, undefined, 9);
+  normal(base + "na esfera Municipal em outro município: " + d.diasOutroMun + " dias.", L + 3, 223, undefined, 9);
+  normal(base + "na esfera Estadual: " + d.diasEstadual + " dias.", L + 3, 229.5, undefined, 9);
+  normal(base + "na iniciativa Privada: " + d.diasPrivada + " dias.", L + 3, 236, undefined, 9);
 
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.text("PONTUAÇÃO TOTAL DECLARADA: " + d.pontos.total + " pontos", L, 258);
+  /* Pontuação total */
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(8.5);
+  doc.text("(Cursos + cursos de capacitação + experiência profissional)", L, 247);
+  const cw = W / 4;
+  const cab = ["CURSOS", "CURSOS DE CAPACITAÇÃO", "EXPERIÊNCIA PROFISSIONAL", "PONTUAÇÃO TOTAL"];
+  const val = [d.pontos.titulos, d.pontos.cursos, d.pontos.experiencia, d.pontos.total];
+  cab.forEach((t, i) => {
+    doc.setFillColor(215, 215, 215);
+    doc.rect(L + i * cw, 249, cw, 6, "FD");
+    negrito(t, L + i * cw + cw / 2, 253.2, { align: "center" }, 8);
+    doc.rect(L + i * cw, 255, cw, 8);
+    if (i === 3) negrito(val[i] + " pontos", L + i * cw + cw / 2, 260.8, { align: "center" }, 11);
+    else normal(val[i] + " pontos", L + i * cw + cw / 2, 260.8, { align: "center" }, 10);
+  });
+
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  doc.text("(a pontuação final é conferida pela Comissão, com base nos documentos apresentados)", L, 263);
-  doc.line(L + 20, 277, R - 20, 277);
-  normal("Assinatura do candidato (legível e por extenso)", 105, 282, { align: "center" });
+  doc.text("A pontuação final é conferida no ato da convocação, com base nos documentos apresentados.", L, 269);
 
-  /* ---------- Página 3: Anexo V ---------- */
-  doc.addPage();
-  cabecalho();
-  titulo("ANEXO V", 40);
-  titulo("MODELO DE REMETENTE", 46);
-  y = 56;
-  paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2026 do Processo Seletivo Simplificado.)", L, W);
-
-  doc.rect(L + 5, 75, W - 10, 92);
-  negrito("À", L + 10, 85);
-  y = 95;
-  paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2026.", L + 10, 160, "bold");
-  negrito("Cargo Pleiteado: ASSISTENTE EDUCACIONAL MAE - A", L + 10, 110);
-  y = 118;
-  paragrafo("Candidato(a): " + d.nome, L + 10, 160, "bold");
-  negrito("Nº de pré-inscrição: " + numero, L + 10, 131);
-  negrito("Número de folhas dentro do envelope: ______", L + 10, 139);
-  negrito("Espera Feliz, ______ de " + CONFIG.mesAno + ".", L + 10, 147);
-  doc.line(L + 15, 157, R - 15, 157);
-  normal("Assinatura do Candidato (legível e por extenso)", 105, 162, { align: "center" });
-
-  /* ---------- Página 4: Conferência do candidato ---------- */
-  doc.addPage();
-  cabecalho();
-  titulo("CONFERÊNCIA DO CANDIDATO", 40);
-  normal("(para uso do candidato; não precisa ser entregue)", 105, 46, { align: "center" });
-  negrito("Nº de pré-inscrição: " + numero, L, 54);
-  y = 62;
-
-  paragrafo("Requisitos declarados (item 3.2 do edital)", L, W, "bold");
-  d.requisitos.forEach((r) => paragrafo(r.resposta.toUpperCase() + " - " + r.texto, L + 3, W - 3));
-  y += 4;
-
-  paragrafo("Documentos que devem estar no envelope lacrado (item 4.2 do edital)", L, W, "bold");
-  const docs = [
-    "Ficha de Inscrição (Anexo III), impressa e assinada",
-    "Ficha Somatória do Quadro de Títulos e Experiência Profissional (Anexo IV), impressa e assinada",
-    "Remetente (Anexo V), colado na parte externa do envelope",
-    "Cópia da carteira de identidade ou documento legalmente aceitável, com foto, filiação e assinatura",
-    "Cópia do CPF",
-    "Cópia do título de eleitor e do comprovante de quitação eleitoral",
-    "Cópia do certificado de reservista (candidatos do sexo masculino)",
-    "Cópia do comprovante de residência atual",
-    "Cópia do diploma e/ou declaração de conclusão que comprove a habilitação exigida, com histórico escolar",
-    "Cópia dos comprovantes dos títulos declarados (certificados ou declarações com carga horária)",
-    "Certidão de tempo de serviço no cargo pleiteado, contado até " + CONFIG.dataCorte + ", ou cópia das páginas da carteira de trabalho (qualificação civil e registro de contrato)"
-  ];
-  if (d.pcd === "Sim") docs.push("Atestado médico para pessoa com deficiência (Anexo VIII)");
-  docs.forEach((t) => paragrafo("(   ) " + t, L + 3, W - 3));
-  y += 4;
-
-  paragrafo("Entrega presencial, em envelope lacrado: " + CONFIG.entrega + " Não é aceita entrega por correio nem por procuração.", L, W);
-  y += 2;
-  paragrafo("Na convocação serão exigidos ainda: certidão de quitação eleitoral atualizada, certidão negativa criminal judicial e atestado médico admissional com exames (item 11.2). Quem não comprovar o que declarou na ficha será eliminado.", L, W);
-  y += 2;
-  paragrafo("Guarde o número da pré-inscrição (" + numero + "): ele identifica o seu cadastro. Se você gerou esta ficha em um computador de uso compartilhado, apague o arquivo PDF do aparelho depois de imprimir.", L, W);
+  /* Assinatura no final do documento */
+  doc.line(L + 20, 281, R - 20, 281);
+  normal("Assinatura do candidato (legível e por extenso)", 105, 286, { align: "center" });
 
   /* ---------- Rodapé em todas as páginas ---------- */
   const n = doc.getNumberOfPages();
@@ -1116,7 +1085,6 @@ function gerarPdf(d, numero) {
   doc.setTextColor(0);
   return doc;
 }
-  
 </script>
 
 </body>
