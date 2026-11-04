@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pré-inscrição | Edital 01/2016 | SEMED</title>
+  <title>Pré-inscrição | Edital 01/2026 | SEMED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     
     :root { --verde: #1f7a4d; --borda: #d5dde8; --fundo: #f3f6fa; }
     * { box-sizing: border-box; }
     body { margin: 0; font-family: Arial, sans-serif; background: var(--fundo); color: #1d2733; }
-    header { background: var(--verde); color: #fff; padding: 20px 16px; text-align: center; }
-    header h1 { margin: 0; font-size: 18px; }
-    header p { margin: 4px 0 0; font-size: 14px; }
+    header { background: linear-gradient(180deg, #ffffff 0%, #eef6f1 100%); color: #1b5e3b; padding: 18px 16px 20px;
+             text-align: center; border-bottom: 5px solid var(--verde); }
+    header h1 { margin: 0; font-size: 18px; color: #14532d; text-wrap: balance; }
+    header p { margin: 4px 0 0; font-size: 14px; color: #3d4b5c; }
     .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
     fieldset { background: #fff; border: 1px solid var(--borda); border-radius: 12px;
                padding: 16px; margin: 0 0 14px; }
@@ -78,7 +79,7 @@ input[type=checkbox] { width: auto; }
     .topo { max-width: 960px; margin: 0 auto; display: flex; align-items: center;
             justify-content: space-between; gap: 16px; }
     .topo .titulos { flex: 1; text-align: center; }
-    .topo .logo { flex: 0 0 auto; width: 200px; background: #fff; border-radius: 12px; padding: 8px 12px; }
+    .topo .logo { flex: 0 0 auto; width: 210px; }
     .topo .logo img { display: block; width: 100%; height: auto; }
     @media (max-width: 760px) {
       .topo { flex-wrap: wrap; justify-content: center; gap: 12px; }
@@ -92,11 +93,22 @@ input[type=checkbox] { width: auto; }
                           letter-spacing: 0; opacity: .92; }
     .vazio { margin: 0; padding: 22px 12px; text-align: center; font-size: 14px; font-style: italic;
              color: #5d6b7c; border: 1px dashed var(--borda); border-radius: 10px; }
+    .tabela-box { border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; }
+    .cronograma { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .cronograma th { background: var(--verde); color: #fff; text-align: left; padding: 10px 14px;
+                     font-size: 12.5px; letter-spacing: .5px; text-transform: uppercase; }
+    .cronograma td { padding: 11px 14px; border-top: 1px solid #edf1f6; vertical-align: top; }
+    .cronograma tbody tr:nth-child(even) td { background: #f7f9fc; }
+    .cronograma td.data { width: 1%; white-space: nowrap; font-weight: bold; color: var(--verde); }
+    .cronograma td.data small { display: block; font-weight: normal; font-size: 12px; color: #5d6b7c; }
+    .cronograma tbody tr.destaque td { background: #e8f6ee; }
+    .cronograma tbody tr.destaque td:last-child { font-weight: bold; }
+    .legenda-tab { margin: 10px 2px 0; font-size: 12.5px; color: #5d6b7c; }
     .cargo-nome { margin: 0 0 8px; font-size: 14px; font-weight: bold; }
     .atribuicoes { margin: 0 0 14px; padding-left: 20px; font-size: 14px; line-height: 1.55; }
     .atribuicoes li { margin-bottom: 6px; }
-    .btn-edital { display: inline-block; margin-top: 12px; padding: 10px 18px; background: #fff;
-                  color: var(--verde); font-weight: bold; font-size: 14px; text-decoration: none;
+    .btn-edital { display: inline-block; margin-top: 12px; padding: 10px 18px; background: var(--verde);
+                  color: #fff; font-weight: bold; font-size: 14px; text-decoration: none;
                   border-radius: 99px; }
     .btn-edital:hover { filter: brightness(0.94); }
     .btn-gerar:disabled { opacity: .6; cursor: wait; }
@@ -117,7 +129,7 @@ input[type=checkbox] { width: auto; }
     <div class="titulos">
       <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
       <p>Secretaria Municipal de Educação</p>
-      <p>Processo Seletivo Simplificado – Edital 01/2016 | Assistente Educacional MAE-A</p>
+      <p>Processo Seletivo Simplificado – Edital 01/2026 | Assistente Educacional MAE-A</p>
       <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 Ler o edital completo (PDF)</a>
     </div>
     <div class="logo"><img src="logo-prefeitura.png" alt="Prefeitura Municipal de Espera Feliz"></div>
@@ -132,7 +144,24 @@ input[type=checkbox] { width: auto; }
       <h2 class="anexo-titulo">ANEXO I <small>Cronograma</small></h2>
       <fieldset>
         <legend>Cronograma</legend>
-        <p class="vazio">O cronograma será inserido aqui.</p>
+        <div class="tabela-box">
+          <table class="cronograma">
+            <thead>
+              <tr><th>Data</th><th>Ação</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="data">05/11/2026</td><td>Publicação do Edital</td></tr>
+              <tr class="destaque"><td class="data">25/11/2026</td><td>Abertura das Inscrições</td></tr>
+              <tr class="destaque"><td class="data">26/11/2026</td><td>Encerramento das Inscrições</td></tr>
+              <tr><td class="data">30/11/2026</td><td>Divulgação do Resultado Preliminar</td></tr>
+              <tr><td class="data">02/12/2026</td><td>Prazo para Interposição de Recursos contra o Resultado Preliminar</td></tr>
+              <tr><td class="data">03/12/2026</td><td>Resultado da Interposição de Recursos</td></tr>
+              <tr><td class="data">07/12/2026</td><td>Divulgação do Resultado Final e Homologação do Processo Seletivo Simplificado</td></tr>
+              <tr><td class="data"><small>A partir de</small>27/01/2027</td><td>Chamadas: Edital de Convocação</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="legenda-tab">As linhas em verde são os dias de inscrição.</p>
       </fieldset>
     </section>
 
@@ -357,7 +386,7 @@ input[type=checkbox] { width: auto; }
       <label class="decl">
         <input type="checkbox" id="declaracao">
         <span>Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
-          Simplificado nº 01/2016 e declaro que as informações prestadas são verdadeiras, ciente de
+          Simplificado nº 01/2026 e declaro que as informações prestadas são verdadeiras, ciente de
           que serão comprovadas na convocação e de que a falsidade implica eliminação.</span>
       </label>
     </fieldset>
@@ -467,9 +496,9 @@ const PONTOS = {
 const CONFIG = {
   urlEnvio: "https://script.google.com/macros/s/AKfycbwm3hlawvb-k0_2RirN7ZsOOI-eaBZXQIGKELzG-zynmx67ItXR7pvxvdODIGwX09wLkA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
   chave: "troque-esta-chave-123",   // precisa ser igual à CHAVE do Apps Script   
-  dataCorte: "31/10/2025",
-  mesAno: "novembro de 2025",
-  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2025, das 08h às 16h."
+  dataCorte: "31/10/2026",
+  mesAno: "novembro de 2026",
+  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2026, das 08h às 16h."
 };
 const DIAS_POR_PONTO = 30;
 const EXPERIENCIA_MAX = 36;
@@ -677,7 +706,7 @@ function gerarPdf(d) {
     doc.text("PREFEITURA MUNICIPAL DE ESPERA FELIZ - MG", 105, 14, { align: "center" });
     doc.text("SECRETARIA MUNICIPAL DE EDUCAÇÃO", 105, 20, { align: "center" });
     doc.setFontSize(10);
-    doc.text("PROCESSO SELETIVO SIMPLIFICADO - EDITAL 01/2016", 105, 26, { align: "center" });
+    doc.text("PROCESSO SELETIVO SIMPLIFICADO - EDITAL 01/2026", 105, 26, { align: "center" });
     doc.setDrawColor(31, 122, 77);
     doc.setLineWidth(0.6);
     doc.line(L, 30, R, 30);
@@ -725,7 +754,7 @@ function gerarPdf(d) {
   /* ---------- Página 1: Anexo III ---------- */
   cabecalho();
   titulo("ANEXO III", 40);
-  titulo("FICHA DE INSCRIÇÃO - EDITAL Nº 01/2016", 46);
+  titulo("FICHA DE INSCRIÇÃO - EDITAL Nº 01/2026", 46);
   normal("Nº DE PROTOCOLO: ____________  (preenchido pela Comissão no recebimento)", 105, 53, { align: "center" });
 
   doc.setFillColor(225, 225, 225);
@@ -757,7 +786,7 @@ function gerarPdf(d) {
   const tipos = Array.from(document.querySelectorAll('input[name="tipoPcd"]')).map((c) => c.value);
   tipos.forEach((t, i) => normal(marca(d.tiposPcd.includes(t)) + " " + t, L + 48, 184 + i * 4));
 
-  normal("Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo nº 01/2016.", L, 224);
+  normal("Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo nº 01/2026.", L, 224);
   normal("Ciente ____/____/_____", L, 236);
   doc.line(L + 20, 256, R - 20, 256);
   normal("Assinatura do candidato (legível e por extenso)", 105, 261, { align: "center" });
@@ -846,12 +875,12 @@ function gerarPdf(d) {
   titulo("ANEXO V", 40);
   titulo("MODELO DE REMETENTE", 46);
   y = 56;
-  paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2016 do Processo Seletivo Simplificado.)", L, W);
+  paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2026 do Processo Seletivo Simplificado.)", L, W);
 
   doc.rect(L + 5, 75, W - 10, 82);
   negrito("À", L + 10, 85);
   y = 95;
-  paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2016.", L + 10, 160, "bold");
+  paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2026.", L + 10, 160, "bold");
   negrito("Cargo Pleiteado: ASSISTENTE EDUCACIONAL MAE - A", L + 10, 110);
   y = 118;
   paragrafo("Candidato(a): " + d.nome, L + 10, 160, "bold");
