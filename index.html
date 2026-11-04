@@ -397,10 +397,13 @@ input[type=checkbox] { width: auto; }
         pessoalmente, em envelope lacrado, junto com os documentos.</p>
       <div class="status" id="statusEnvio" role="status"></div>
       <p class="aviso-envio">
-        <strong>Aviso:</strong> ao clicar em gerar a ficha, uma <strong>cópia dos seus dados e da ficha em PDF
-        é enviada automaticamente à Secretaria Municipal de Educação</strong>, apenas para organização
-        do processo seletivo e tratada conforme a LGPD. Esse envio <strong>não substitui</strong> a entrega
-        presencial da inscrição em envelope lacrado, exigida pelo edital.
+        <strong>Aviso:</strong> ao gerar a ficha, sua <strong>pré-inscrição é registrada automaticamente na
+        Secretaria Municipal de Educação</strong> e você recebe um <strong>número de pré-inscrição</strong>.
+        Uma <strong>cópia da sua ficha em PDF</strong> (que contém seus dados pessoais, como CPF, RG, título de
+        eleitor, endereço e, se informado, necessidades especiais) é <strong>enviada por e-mail à Secretaria</strong>
+        para organização do processo seletivo, e os dados de contato e a pontuação ficam em planilha de controle.
+        Os dados são tratados conforme a LGPD, somente para esta finalidade. O registro
+        <strong>não substitui</strong> a entrega presencial da inscrição em envelope lacrado, exigida pelo edital.
       </p>
     </div>
     </section>
@@ -494,7 +497,7 @@ const PONTOS = {
 
 /* ---- Experiência (Anexo IV) ---- */
 const CONFIG = {
-  urlEnvio: "https://script.google.com/macros/s/AKfycbwm3hlawvb-k0_2RirN7ZsOOI-eaBZXQIGKELzG-zynmx67ItXR7pvxvdODIGwX09wLkA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
+  urlEnvio: "https://script.google.com/macros/s/AKfycbwB87G30TpL2RrKFkzRuF-i6RGNcbF2dj6lcVk5n80KKNOWzBHIocVdNtCFMAUk29nA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
   chave: "troque-esta-chave-123",   // precisa ser igual à CHAVE do Apps Script   
   dataCorte: "31/10/2026",
   mesAno: "novembro de 2026",
@@ -625,43 +628,73 @@ function nomeSeguro(nome) {
   return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "_");
 }
 
-/* ---- Envio automático da cópia para a SEMED ---- */
-async function enviarParaSemed(d, doc, nomeArquivo) {
-  const status = $("statusEnvio");
-  if (!CONFIG.urlEnvio) return;               // sem endereço configurado: não envia
+/* ---- Registro da pré-inscrição (gera o número) ---- */
+let ultimoRegistro = { assinatura: "", numero: "", pdfEnviado: false };
 
-  const btn = $("btnGerar");
-  btn.disabled = true;
-  status.className = "status mostrar";
-  status.textContent = "Enviando cópia para a SEMED...";
+function numeroProvisorio() {
+  const letras = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let r = "";
+  for (let i = 0; i < 6; i++) r += letras[Math.floor(Math.random() * letras.length)];
+  return "PROV-" + r;
+}
+
+/* Envia um pedido ao Apps Script e devolve o JSON (lança erro se falhar) */
+async function chamarServidor(obj) {
+  const controle = new AbortController();
+  const limite = setTimeout(() => controle.abort(), 30000);
+  try {
+    const resp = await fetch(CONFIG.urlEnvio, { method: "POST", body: JSON.stringify(obj), signal: controle.signal });
+    const r = await resp.json();
+    if (!r.ok) throw new Error(r.erro || "falha no servidor");
+    return r;
+  } finally {
+    clearTimeout(limite);
+  }
+}
+
+/* Passo 1: registra só o essencial na planilha e recebe o número */
+async function registrarPreInscricao(d) {
+  if (!CONFIG.urlEnvio) return { numero: numeroProvisorio(), registrada: false, semServidor: true };
+
+  const payload = {
+    chave: CONFIG.chave, acao: "registrar",
+    nome: d.nome, nascimento: dataBR(d.nascimento), telefone: d.telefone, email: d.email,
+    pontosTitulos: d.pontos.titulos, pontosCursos: d.pontos.cursos,
+    diasExperiencia: d.pontos.dias, pontosExperiencia: d.pontos.experiencia,
+    pontosTotal: d.pontos.total,
+    diasEF: d.diasEF, diasOutroMun: d.diasOutroMun,
+    diasEstadual: d.diasEstadual, diasPrivada: d.diasPrivada
+  };
+  const assinatura = JSON.stringify(payload);
+  // Mesmos dados já registrados nesta página: reaproveita o número, sem criar outro registro
+  if (assinatura === ultimoRegistro.assinatura) return { numero: ultimoRegistro.numero, registrada: true };
 
   try {
-    const payload = {
-      chave: CONFIG.chave,
-      nomeArquivo: nomeArquivo,
-      pdfBase64: doc.output("datauristring").split(",")[1],
-      nome: d.nome, cpf: d.cpf, rg: d.rg, titulo: d.titulo,
-      nascimento: dataBR(d.nascimento), telefone: d.telefone, recado: d.recado,
-      email: d.email, endereco: d.endereco, municipio: d.municipio, uf: d.uf.toUpperCase(),
-      pcd: d.pcd, tiposPcd: d.tiposPcd.join(", "),
-      pontosTitulos: d.pontos.titulos, pontosCursos: d.pontos.cursos,
-      diasExperiencia: d.pontos.dias, pontosExperiencia: d.pontos.experiencia,
-      pontosTotal: d.pontos.total,
-      diasEF: d.diasEF, diasOutroMun: d.diasOutroMun,
-      diasEstadual: d.diasEstadual, diasPrivada: d.diasPrivada
-    };
-    const resp = await fetch(CONFIG.urlEnvio, { method: "POST", body: JSON.stringify(payload) });
-    const r = await resp.json();
-    if (!r.ok) throw new Error(r.erro || "falha no envio");
-    status.className = "status ok";
-    status.textContent = "✅ Ficha baixada e cópia enviada à SEMED. Agora imprima, assine e entregue pessoalmente.";
+    const r = await chamarServidor(payload);
+    if (!r.numero) throw new Error("sem número");
+    ultimoRegistro = { assinatura, numero: r.numero, pdfEnviado: false };
+    return { numero: r.numero, registrada: true };
   } catch (erro) {
     console.error(erro);
-    status.className = "status falha";
-    status.textContent = "⚠️ Sua ficha foi baixada, mas não foi possível confirmar o envio da cópia à SEMED. " +
-                         "Sem problema: imprima, assine e entregue normalmente.";
-  } finally {
-    btn.disabled = false;
+    return { numero: numeroProvisorio(), registrada: false };
+  }
+}
+
+/* Passo 2: envia o PDF por e-mail à Secretaria (uma vez por registro) */
+async function enviarPdfSemed(d, numero, doc, nomeArquivo) {
+  if (ultimoRegistro.numero === numero && ultimoRegistro.pdfEnviado) return true;
+  try {
+    const base64 = doc.output("datauristring").split(",")[1];
+    await chamarServidor({
+      chave: CONFIG.chave, acao: "enviarPdf", numero, nomeArquivo,
+      nome: d.nome, telefone: d.telefone, email: d.email, pontosTotal: d.pontos.total,
+      pdfBase64: base64
+    });
+    if (ultimoRegistro.numero === numero) ultimoRegistro.pdfEnviado = true;
+    return true;
+  } catch (erro) {
+    console.error(erro);
+    return false;
   }
 }
 
@@ -676,11 +709,53 @@ $("btnGerar").addEventListener("click", async () => {
     alert("Não foi possível carregar o gerador de PDF. Verifique a internet e recarregue a página.");
     return;
   }
-  const d = coletar();
-  const doc = gerarPdf(d);
-  const nomeArquivo = "Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf";
-  doc.save(nomeArquivo);                       // o candidato sempre recebe o PDF
-  await enviarParaSemed(d, doc, nomeArquivo);  // e a cópia vai para a SEMED
+
+  const btn = $("btnGerar");
+  const status = $("statusEnvio");
+  btn.disabled = true;
+  status.className = "status";
+  status.textContent = "";
+
+  try {
+    const d = coletar();
+    if (CONFIG.urlEnvio) {
+      status.className = "status mostrar";
+      status.textContent = "Registrando sua pré-inscrição e enviando a ficha... aguarde.";
+    }
+    const reg = await registrarPreInscricao(d);
+
+    const doc = gerarPdf(d, reg.numero);
+    const nomeArquivo = "Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf";
+    doc.save(nomeArquivo);   // o candidato sempre recebe o PDF
+
+    if (reg.registrada) {
+      const enviado = await enviarPdfSemed(d, reg.numero, doc, nomeArquivo);
+      if (enviado) {
+        status.className = "status ok";
+        status.textContent = "✅ Pré-inscrição registrada: nº " + reg.numero + ". Sua ficha foi baixada e uma cópia " +
+                             "foi enviada à Secretaria. Agora imprima, assine e entregue pessoalmente, em envelope lacrado.";
+      } else {
+        status.className = "status falha";
+        status.textContent = "⚠️ Pré-inscrição registrada (nº " + reg.numero + ") e ficha baixada, mas a cópia " +
+                             "não chegou à Secretaria por e-mail. Clique em gerar novamente para tentar de novo " +
+                             "ou entregue normalmente a ficha impressa.";
+      }
+    } else if (!reg.semServidor) {
+      status.className = "status falha";
+      status.textContent = "⚠️ Sua ficha foi baixada com o código provisório " + reg.numero + ", mas não foi " +
+                           "possível registrar a pré-inscrição eletronicamente. Sem problema: imprima, assine " +
+                           "e entregue normalmente.";
+    } else {
+      status.className = "status";
+      status.textContent = "";
+    }
+  } catch (erro) {
+    console.error(erro);
+    status.className = "status falha";
+    status.textContent = "⚠️ Não foi possível gerar a ficha. Recarregue a página e tente novamente.";
+  } finally {
+    btn.disabled = false;
+  }
 });
 /* ======================= GERAÇÃO DO PDF ======================= */
 function dataBR(iso) {
@@ -690,7 +765,7 @@ function dataBR(iso) {
 const marca = (b) => (b ? "( X )" : "(   )");
 const qtd = (n) => [marca(n === 1) + " 01 - um", marca(n === 2) + " 02 - dois", marca(n === 3) + " 03 - três"];
 
-function gerarPdf(d) {
+function gerarPdf(d, numero) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const L = 15, R = 195, W = 180;
@@ -755,7 +830,13 @@ function gerarPdf(d) {
   cabecalho();
   titulo("ANEXO III", 40);
   titulo("FICHA DE INSCRIÇÃO - EDITAL Nº 01/2026", 46);
-  normal("Nº DE PROTOCOLO: ____________  (preenchido pela Comissão no recebimento)", 105, 53, { align: "center" });
+  negrito("Nº de pré-inscrição: " + numero, L, 53);
+  normal("Nº DE PROTOCOLO (Comissão): ____________", R, 53, { align: "right" });
+  if (/^PROV-/.test(numero)) {
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(7.5);
+    doc.text("Código provisório: esta pré-inscrição não foi registrada eletronicamente.", L, 56.6);
+  }
 
   doc.setFillColor(225, 225, 225);
   doc.rect(L, 58, W, 13, "FD");
@@ -796,7 +877,14 @@ function gerarPdf(d) {
   cabecalho();
   titulo("ANEXO IV", 40);
   titulo("FICHA SOMATÓRIA DO QUADRO DE TÍTULOS E EXPERIÊNCIA PROFISSIONAL", 46, 11);
-  normal("Candidato(a): " + d.nome + "   |   CPF: " + d.cpf, L, 53);
+  (function () {
+    const t = "Candidato(a): " + d.nome + "   |   CPF: " + d.cpf + "   |   Pré-inscrição: " + numero;
+    let fs = 10;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(fs);
+    while (doc.getTextWidth(t) > W && fs > 6) { fs -= 0.5; doc.setFontSize(fs); }
+    doc.text(t, L, 53);
+  })();
 
   const colX = [L, L + 78, L + 106, L + 158];
   const colW = [78, 28, 52, 22];
@@ -877,24 +965,26 @@ function gerarPdf(d) {
   y = 56;
   paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2026 do Processo Seletivo Simplificado.)", L, W);
 
-  doc.rect(L + 5, 75, W - 10, 82);
+  doc.rect(L + 5, 75, W - 10, 92);
   negrito("À", L + 10, 85);
   y = 95;
   paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2026.", L + 10, 160, "bold");
   negrito("Cargo Pleiteado: ASSISTENTE EDUCACIONAL MAE - A", L + 10, 110);
   y = 118;
   paragrafo("Candidato(a): " + d.nome, L + 10, 160, "bold");
-  negrito("Número de folhas dentro do envelope: ______", L + 10, 130);
-  negrito("Espera Feliz, ______ de " + CONFIG.mesAno + ".", L + 10, 140);
-  doc.line(L + 15, 150, R - 15, 150);
-  normal("Assinatura do Candidato (legível e por extenso)", 105, 155, { align: "center" });
+  negrito("Nº de pré-inscrição: " + numero, L + 10, 131);
+  negrito("Número de folhas dentro do envelope: ______", L + 10, 139);
+  negrito("Espera Feliz, ______ de " + CONFIG.mesAno + ".", L + 10, 147);
+  doc.line(L + 15, 157, R - 15, 157);
+  normal("Assinatura do Candidato (legível e por extenso)", 105, 162, { align: "center" });
 
   /* ---------- Página 4: Conferência do candidato ---------- */
   doc.addPage();
   cabecalho();
   titulo("CONFERÊNCIA DO CANDIDATO", 40);
   normal("(para uso do candidato; não precisa ser entregue)", 105, 46, { align: "center" });
-  y = 58;
+  negrito("Nº de pré-inscrição: " + numero, L, 54);
+  y = 62;
 
   paragrafo("Requisitos declarados (item 3.2 do edital)", L, W, "bold");
   d.requisitos.forEach((r) => paragrafo(r.resposta.toUpperCase() + " - " + r.texto, L + 3, W - 3));
@@ -921,6 +1011,8 @@ function gerarPdf(d) {
   paragrafo("Entrega presencial, em envelope lacrado: " + CONFIG.entrega + " Não é aceita entrega por correio nem por procuração.", L, W);
   y += 2;
   paragrafo("Na convocação serão exigidos ainda: certidão de quitação eleitoral atualizada, certidão negativa criminal judicial e atestado médico admissional com exames (item 11.2). Quem não comprovar o que declarou na ficha será eliminado.", L, W);
+  y += 2;
+  paragrafo("Guarde o número da pré-inscrição (" + numero + "): ele identifica o seu cadastro. Se você gerou esta ficha em um computador de uso compartilhado, apague o arquivo PDF do aparelho depois de imprimir.", L, W);
 
   /* ---------- Rodapé em todas as páginas ---------- */
   const n = doc.getNumberOfPages();
