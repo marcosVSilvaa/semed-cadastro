@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pré-inscrição | Edital 01/2025 | SEMEC</title>
+  <title>Pré-inscrição | Edital 01/2016 | SEMED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     
@@ -75,6 +75,26 @@ input[type=checkbox] { width: auto; }
              font-weight: bold; cursor: pointer; color: #fff; background: var(--verde); }
 .btn-gerar:hover { filter: brightness(1.08); }
 .nota { font-size: 13px; color: #5d6b7c; text-align: center; margin: 10px 0 0; }
+    .topo { max-width: 960px; margin: 0 auto; display: flex; align-items: center;
+            justify-content: space-between; gap: 16px; }
+    .topo .titulos { flex: 1; text-align: center; }
+    .topo .logo { flex: 0 0 auto; width: 200px; background: #fff; border-radius: 12px; padding: 8px 12px; }
+    .topo .logo img { display: block; width: 100%; height: auto; }
+    @media (max-width: 760px) {
+      .topo { flex-wrap: wrap; justify-content: center; gap: 12px; }
+      .topo .logo { width: 150px; }
+      .topo .titulos { order: 3; flex-basis: 100%; }
+    }
+    .anexo { margin: 0 0 26px; }
+    .anexo-titulo { margin: 0 0 12px; padding: 12px 16px; background: var(--verde); color: #fff;
+                    border-radius: 12px; font-size: 17px; letter-spacing: .3px; }
+    .anexo-titulo small { display: block; margin-top: 2px; font-size: 13px; font-weight: normal;
+                          letter-spacing: 0; opacity: .92; }
+    .vazio { margin: 0; padding: 22px 12px; text-align: center; font-size: 14px; font-style: italic;
+             color: #5d6b7c; border: 1px dashed var(--borda); border-radius: 10px; }
+    .cargo-nome { margin: 0 0 8px; font-size: 14px; font-weight: bold; }
+    .atribuicoes { margin: 0 0 14px; padding-left: 20px; font-size: 14px; line-height: 1.55; }
+    .atribuicoes li { margin-bottom: 6px; }
     .btn-edital { display: inline-block; margin-top: 12px; padding: 10px 18px; background: #fff;
                   color: var(--verde); font-weight: bold; font-size: 14px; text-decoration: none;
                   border-radius: 99px; }
@@ -92,17 +112,63 @@ input[type=checkbox] { width: auto; }
 <body>
 
 <header>
-  <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
-  <p>Secretaria Municipal de Educação e Cultura</p>
-  <p>Processo Seletivo Simplificado – Edital 01/2025 | Assistente Educacional MAE-A</p>
-  <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 Ler o edital completo (PDF)</a>
+  <div class="topo">
+    <div class="logo"><img src="logo-semed.png" alt="SEMED - Secretaria Municipal de Educação"></div>
+    <div class="titulos">
+      <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
+      <p>Secretaria Municipal de Educação</p>
+      <p>Processo Seletivo Simplificado – Edital 01/2016 | Assistente Educacional MAE-A</p>
+      <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 Ler o edital completo (PDF)</a>
+    </div>
+    <div class="logo"><img src="logo-prefeitura.png" alt="Prefeitura Municipal de Espera Feliz"></div>
+  </div>
 </header>
 
 <div class="wrap">
   <form id="form" novalidate>
 
-    <fieldset>
-      <legend>1. Identificação do candidato</legend>
+    <!-- ===================== ANEXO I ===================== -->
+    <section class="anexo">
+      <h2 class="anexo-titulo">ANEXO I <small>Cronograma</small></h2>
+      <fieldset>
+        <legend>Cronograma</legend>
+        <p class="vazio">O cronograma será inserido aqui.</p>
+      </fieldset>
+    </section>
+
+    <!-- ===================== ANEXO II ===================== -->
+    <section class="anexo">
+      <h2 class="anexo-titulo">ANEXO II <small>Atribuições do cargo</small></h2>
+      <fieldset>
+        <legend>Atribuições do cargo</legend>
+        <p class="cargo-nome">ASSISTENTE EDUCACIONAL MAE – A</p>
+        <ul class="atribuicoes">
+          <li>Seguir orientações do professor regente de classe;</li>
+          <li>Colaborar com a inclusão do aluno no desenvolvimento das atividades pedagógicas, planejadas pelo professor, contribuindo com o aprendizado da execução da tarefa com vistas à sua autonomia pedagógica;</li>
+          <li>Colaborar com o professor na realização de relatórios e/ou avaliações do desempenho do aluno;</li>
+          <li>Acompanhar o(s) aluno(s) público alvo da Educação Especial no recreio, intervalo a interação com os demais alunos da Unidade Escolar, auxiliar o aluno público alvo da Educação Especial na organização de suas atividades;</li>
+          <li>Criar e proporcionar possibilidades para que o aluno aprenda de acordo com suas capacidades;</li>
+          <li>Auxiliar o aluno a descobrir suas potencialidades;</li>
+          <li>Assistir aos alunos nas atividades escolares, profissionais e de lazer;</li>
+          <li>Recepcionar a entrada e saída das crianças e dos alunos público alvo da Educação Especial, bem como no embarque e desembarque do transporte escolar, na entrada e saída dos turnos escolares;</li>
+          <li>Verificar o bem estar, a alimentação, o sono e a disposição física e psicológica dos alunos ou crianças sobre seus cuidados;</li>
+          <li>Garantir a segurança, integridade e bem estar dos alunos ou crianças no ambiente da monitoria;</li>
+          <li>Participar da formação continuada;</li>
+          <li>Estabelecer uma ligação entre a escola e a família do aluno;</li>
+          <li>Executar outras tarefas solicitadas pela chefia imediata compatíveis com a função.</li>
+        </ul>
+        <label class="decl">
+          <input type="checkbox" id="ciencia">
+          <span>Declaro que li e estou ciente das atribuições do cargo para o qual pretendo me inscrever.</span>
+        </label>
+      </fieldset>
+    </section>
+
+    <!-- ===================== ANEXO III ===================== -->
+    <section class="anexo">
+      <h2 class="anexo-titulo">ANEXO III <small>Ficha de inscrição</small></h2>
+      <fieldset>
+      <legend>Identificação do candidato</legend>
       <div class="grade">
         <div class="full">
           <label for="nome">Nome completo *</label>
@@ -150,8 +216,9 @@ input[type=checkbox] { width: auto; }
         </div>
       </div>
     </fieldset>
-        <fieldset>
-      <legend>2. Portador de necessidades especiais</legend>
+
+      <fieldset>
+      <legend>Portador de necessidades especiais</legend>
       <div class="opcoes">
         <label><input type="radio" name="pcd" value="Sim"><span>Sim</span></label>
         <label><input type="radio" name="pcd" value="Não"><span>Não</span></label>
@@ -173,8 +240,8 @@ input[type=checkbox] { width: auto; }
       </div>
     </fieldset>
 
-    <fieldset>
-      <legend>3. Requisitos para inscrição</legend>
+      <fieldset>
+      <legend>Requisitos para inscrição</legend>
       <div class="aviso">
         Marque <strong>Sim</strong> apenas se atende ao item. Você deverá comprovar tudo com
         documentos na convocação. Quem não comprovar é eliminado.
@@ -185,8 +252,21 @@ input[type=checkbox] { width: auto; }
         item 3.2 do edital e não poderá se inscrever neste processo seletivo.
       </div>
     </fieldset>
-    <fieldset>
-      <legend>4. Cursos e graduação (Anexo IV)</legend>
+
+      <fieldset>
+        <legend>Declaração de aptidão</legend>
+        <label class="decl">
+          <input type="checkbox" id="aptidao">
+          <span>Declaro possuir os requisitos de aptidão ao exercício do cargo pleiteado, conforme o item 6 do referido edital.</span>
+        </label>
+      </fieldset>
+    </section>
+
+    <!-- ===================== ANEXO IV ===================== -->
+    <section class="anexo">
+      <h2 class="anexo-titulo">ANEXO IV <small>Ficha somatória do quadro de títulos e experiência profissional</small></h2>
+      <fieldset>
+      <legend>Cursos e graduação</legend>
       <div class="aviso">
         Declare <strong>somente</strong> o que você consegue comprovar com certificado ou diploma.
         Cada título vale uma única vez e precisa ter <strong>carga horária</strong>.
@@ -237,8 +317,9 @@ input[type=checkbox] { width: auto; }
         <span class="total">Subtotal: <strong id="ptsSub">0</strong> pontos</span>
       </div>
     </fieldset>
-        <fieldset>
-      <legend>5. Experiência profissional no cargo</legend>
+
+      <fieldset>
+      <legend>Experiência profissional no cargo</legend>
       <div class="aviso">
         Informe os <strong>dias</strong> trabalhados como <strong>contratado ou designado</strong>,
         somente no cargo pleiteado, contados até <strong class="dataCorte"></strong>.
@@ -270,29 +351,31 @@ input[type=checkbox] { width: auto; }
         <span class="total">Pontuação total declarada: <strong id="ptsTotal">0</strong> pontos</span>
       </div>
     </fieldset>
-        <fieldset>
-      <legend>6. Declaração</legend>
+
+      <fieldset>
+      <legend>Declaração</legend>
       <label class="decl">
         <input type="checkbox" id="declaracao">
         <span>Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
-          Simplificado nº 01/2025 e declaro que as informações prestadas são verdadeiras, ciente de
+          Simplificado nº 01/2016 e declaro que as informações prestadas são verdadeiras, ciente de
           que serão comprovadas na convocação e de que a falsidade implica eliminação.</span>
       </label>
     </fieldset>
 
-    <div class="acoes">
+      <div class="acoes">
       <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
       <p class="nota">Depois de gerar, <strong>imprima e assine</strong> as fichas e entregue
         pessoalmente, em envelope lacrado, junto com os documentos.</p>
       <div class="status" id="statusEnvio" role="status"></div>
       <p class="aviso-envio">
         <strong>Aviso:</strong> ao clicar em gerar a ficha, uma <strong>cópia dos seus dados e da ficha em PDF
-        é enviada automaticamente à Secretaria Municipal de Educação e Cultura</strong>, apenas para organização
+        é enviada automaticamente à Secretaria Municipal de Educação</strong>, apenas para organização
         do processo seletivo e tratada conforme a LGPD. Esse envio <strong>não substitui</strong> a entrega
         presencial da inscrição em envelope lacrado, exigida pelo edital.
       </p>
     </div>
-    
+    </section>
+
   </form>
 </div>
   
@@ -383,10 +466,10 @@ const PONTOS = {
 /* ---- Experiência (Anexo IV) ---- */
 const CONFIG = {
   urlEnvio: "https://script.google.com/macros/s/AKfycbwm3hlawvb-k0_2RirN7ZsOOI-eaBZXQIGKELzG-zynmx67ItXR7pvxvdODIGwX09wLkA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
-  chave: "troque-esta-chave-123",   // precisa ser igual à CHAVE do Apps Script
+  chave: "troque-esta-chave-123",   // precisa ser igual à CHAVE do Apps Script   
   dataCorte: "31/10/2025",
   mesAno: "novembro de 2025",
-  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação e Cultura), nos dias 25 e 26 de novembro de 2025, das 08h às 16h."
+  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2025, das 08h às 16h."
 };
 const DIAS_POR_PONTO = 30;
 const EXPERIENCIA_MAX = 36;
@@ -448,11 +531,13 @@ function validar() {
   const erros = [];
   document.querySelectorAll(".erro").forEach((el) => el.classList.remove("erro"));
 
+  if (!$("ciencia").checked) erros.push("Marque a ciência das atribuições do cargo (Anexo II).");
+
   OBRIGATORIOS.forEach((id) => {
     if (!$(id).value.trim()) $(id).classList.add("erro");
   });
   if (OBRIGATORIOS.some((id) => !$(id).value.trim())) {
-    erros.push("Preencha os campos destacados em vermelho (seção 1).");
+    erros.push("Preencha os campos destacados em vermelho (Anexo III, identificação).");
   }
   if ($("cpf").value && !cpfValido($("cpf").value)) {
     $("cpf").classList.add("erro");
@@ -465,19 +550,20 @@ function validar() {
 
   const pcd = document.querySelector('input[name="pcd"]:checked');
   if (!pcd) {
-    erros.push("Informe se é portador de necessidades especiais (seção 2).");
+    erros.push("Informe se é portador de necessidades especiais (Anexo III).");
   } else if (pcd.value === "Sim" && !document.querySelector('input[name="tipoPcd"]:checked')) {
-    erros.push("Marque o tipo de necessidade especial (seção 2).");
+    erros.push("Marque o tipo de necessidade especial (Anexo III).");
   }
 
   const faltaResposta = REQUISITOS.some((_, i) => !document.querySelector('input[name="req' + i + '"]:checked'));
   if (!atendeRequisitos()) {
-    erros.push("Pelas respostas da seção 3, você não atende aos requisitos do edital.");
+    erros.push("Pelas suas respostas no Anexo III, você não atende aos requisitos do edital.");
   } else if (faltaResposta) {
-    erros.push("Responda todos os requisitos da seção 3.");
+    erros.push("Responda todos os requisitos (Anexo III).");
   }
 
-  if (!$("declaracao").checked) erros.push("Marque a declaração da seção 6.");
+  if (!$("aptidao").checked) erros.push("Marque a declaração de requisitos de aptidão (Anexo III).");
+  if (!$("declaracao").checked) erros.push("Marque a declaração final (Anexo IV).");
   return erros;
 }
 
@@ -510,15 +596,15 @@ function nomeSeguro(nome) {
   return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "_");
 }
 
-/* ---- Envio automático da cópia para a SEMEC ---- */
-async function enviarParaSemec(d, doc, nomeArquivo) {
+/* ---- Envio automático da cópia para a SEMED ---- */
+async function enviarParaSemed(d, doc, nomeArquivo) {
   const status = $("statusEnvio");
   if (!CONFIG.urlEnvio) return;               // sem endereço configurado: não envia
 
   const btn = $("btnGerar");
   btn.disabled = true;
   status.className = "status mostrar";
-  status.textContent = "Enviando cópia para a SEMEC...";
+  status.textContent = "Enviando cópia para a SEMED...";
 
   try {
     const payload = {
@@ -539,11 +625,11 @@ async function enviarParaSemec(d, doc, nomeArquivo) {
     const r = await resp.json();
     if (!r.ok) throw new Error(r.erro || "falha no envio");
     status.className = "status ok";
-    status.textContent = "✅ Ficha baixada e cópia enviada à SEMEC. Agora imprima, assine e entregue pessoalmente.";
+    status.textContent = "✅ Ficha baixada e cópia enviada à SEMED. Agora imprima, assine e entregue pessoalmente.";
   } catch (erro) {
     console.error(erro);
     status.className = "status falha";
-    status.textContent = "⚠️ Sua ficha foi baixada, mas não foi possível confirmar o envio da cópia à SEMEC. " +
+    status.textContent = "⚠️ Sua ficha foi baixada, mas não foi possível confirmar o envio da cópia à SEMED. " +
                          "Sem problema: imprima, assine e entregue normalmente.";
   } finally {
     btn.disabled = false;
@@ -565,7 +651,7 @@ $("btnGerar").addEventListener("click", async () => {
   const doc = gerarPdf(d);
   const nomeArquivo = "Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf";
   doc.save(nomeArquivo);                       // o candidato sempre recebe o PDF
-  await enviarParaSemec(d, doc, nomeArquivo);  // e a cópia vai para a SEMEC
+  await enviarParaSemed(d, doc, nomeArquivo);  // e a cópia vai para a SEMED
 });
 /* ======================= GERAÇÃO DO PDF ======================= */
 function dataBR(iso) {
@@ -589,9 +675,9 @@ function gerarPdf(d) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("PREFEITURA MUNICIPAL DE ESPERA FELIZ - MG", 105, 14, { align: "center" });
-    doc.text("SECRETARIA MUNICIPAL DE EDUCAÇÃO E CULTURA", 105, 20, { align: "center" });
+    doc.text("SECRETARIA MUNICIPAL DE EDUCAÇÃO", 105, 20, { align: "center" });
     doc.setFontSize(10);
-    doc.text("PROCESSO SELETIVO SIMPLIFICADO - EDITAL 01/2025", 105, 26, { align: "center" });
+    doc.text("PROCESSO SELETIVO SIMPLIFICADO - EDITAL 01/2016", 105, 26, { align: "center" });
     doc.setDrawColor(31, 122, 77);
     doc.setLineWidth(0.6);
     doc.line(L, 30, R, 30);
@@ -639,7 +725,7 @@ function gerarPdf(d) {
   /* ---------- Página 1: Anexo III ---------- */
   cabecalho();
   titulo("ANEXO III", 40);
-  titulo("FICHA DE INSCRIÇÃO - EDITAL Nº 01/2025", 46);
+  titulo("FICHA DE INSCRIÇÃO - EDITAL Nº 01/2016", 46);
   normal("Nº DE PROTOCOLO: ____________  (preenchido pela Comissão no recebimento)", 105, 53, { align: "center" });
 
   doc.setFillColor(225, 225, 225);
@@ -671,7 +757,7 @@ function gerarPdf(d) {
   const tipos = Array.from(document.querySelectorAll('input[name="tipoPcd"]')).map((c) => c.value);
   tipos.forEach((t, i) => normal(marca(d.tiposPcd.includes(t)) + " " + t, L + 48, 184 + i * 4));
 
-  normal("Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo nº 01/2025.", L, 224);
+  normal("Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo nº 01/2016.", L, 224);
   normal("Ciente ____/____/_____", L, 236);
   doc.line(L + 20, 256, R - 20, 256);
   normal("Assinatura do candidato (legível e por extenso)", 105, 261, { align: "center" });
@@ -760,12 +846,12 @@ function gerarPdf(d) {
   titulo("ANEXO V", 40);
   titulo("MODELO DE REMETENTE", 46);
   y = 56;
-  paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2025 do Processo Seletivo Simplificado.)", L, W);
+  paragrafo("(Recortar e colar na parte externa do envelope devidamente lacrado, contendo os documentos em conformidade com o Edital nº 01/2016 do Processo Seletivo Simplificado.)", L, W);
 
   doc.rect(L + 5, 75, W - 10, 82);
   negrito("À", L + 10, 85);
   y = 95;
-  paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E CULTURA E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2025.", L + 10, 160, "bold");
+  paragrafo("SECRETARIA MUNICIPAL DE EDUCAÇÃO E À COMISSÃO DO PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2016.", L + 10, 160, "bold");
   negrito("Cargo Pleiteado: ASSISTENTE EDUCACIONAL MAE - A", L + 10, 110);
   y = 118;
   paragrafo("Candidato(a): " + d.nome, L + 10, 160, "bold");
