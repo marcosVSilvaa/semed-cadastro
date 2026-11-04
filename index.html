@@ -528,10 +528,10 @@ const PONTOS = {
   
 /* ---- Experiência (Anexo IV) ---- */
 const CONFIG = {
-  urlEnvio: "https://script.google.com/macros/s/AKfycbyHLs_cDgouk5paTAyxCdJkwuYnenWx116AdsG5bswGAqSzmtEhz02bcKNHqmlx4hmv/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
+  urlEnvio: "https://script.google.com/macros/s/AKfycbzYcSJIcb87QdeyGfsq8LS1c3uC5AuCnh0CKguPigFgKCw7JMlIVgyVsNyJb4WNiYA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
   chave: "semed-2026",   // precisa ser igual à CHAVE do Apps Script   
-  consultaRH: false,        // mude para true quando a lista do RH estiver na aba "Tempo RH"
-  bloquearDiasRH: false,    // true = o valor trazido do RH não pode ser editado pelo candidato
+  consultaRH: true,        // mude para true quando a lista do RH estiver na aba "Tempo RH"
+  bloquearDiasRH: true,    // true = o valor trazido do RH não pode ser editado pelo candidato
   dataCorte: "31/10/2026",
   mesAno: "novembro de 2026",
   entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2026, das 08h às 16h."
@@ -1116,7 +1116,8 @@ function gerarPdf(d, numero) {
   doc.setTextColor(0);
   return doc;
 }
-</script>
   
+</script>
+
 </body>
 </html>
