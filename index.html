@@ -75,6 +75,17 @@ input[type=checkbox] { width: auto; }
              font-weight: bold; cursor: pointer; color: #fff; background: var(--verde); }
 .btn-gerar:hover { filter: brightness(1.08); }
 .nota { font-size: 13px; color: #5d6b7c; text-align: center; margin: 10px 0 0; }
+    .btn-edital { display: inline-block; margin-top: 12px; padding: 10px 18px; background: #fff;
+                  color: var(--verde); font-weight: bold; font-size: 14px; text-decoration: none;
+                  border-radius: 99px; }
+    .btn-edital:hover { filter: brightness(0.94); }
+    .btn-gerar:disabled { opacity: .6; cursor: wait; }
+    .aviso-envio { font-size: 12.5px; color: #5d6b7c; background: #f3f6fa; border: 1px solid var(--borda);
+                   border-radius: 10px; padding: 10px 12px; margin: 12px 0 0; line-height: 1.5; }
+    .status { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; }
+    .status.mostrar { display: block; background: #eef3fb; border: 1px solid #c4d3ec; }
+    .status.ok { display: block; background: #e8f6ee; border: 1px solid #a8dcc0; }
+    .status.falha { display: block; background: #fff8e1; border: 1px solid #f1dc9a; }
     
   </style>
 </head>
@@ -84,6 +95,7 @@ input[type=checkbox] { width: auto; }
   <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
   <p>Secretaria Municipal de Educação e Cultura</p>
   <p>Processo Seletivo Simplificado – Edital 01/2025 | Assistente Educacional MAE-A</p>
+  <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 Ler o edital completo (PDF)</a>
 </header>
 
 <div class="wrap">
@@ -272,6 +284,13 @@ input[type=checkbox] { width: auto; }
       <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
       <p class="nota">Depois de gerar, <strong>imprima e assine</strong> as fichas e entregue
         pessoalmente, em envelope lacrado, junto com os documentos.</p>
+      <div class="status" id="statusEnvio" role="status"></div>
+      <p class="aviso-envio">
+        <strong>Aviso:</strong> ao clicar em gerar a ficha, uma <strong>cópia dos seus dados e da ficha em PDF
+        é enviada automaticamente à Secretaria Municipal de Educação e Cultura</strong>, apenas para organização
+        do processo seletivo e tratada conforme a LGPD. Esse envio <strong>não substitui</strong> a entrega
+        presencial da inscrição em envelope lacrado, exigida pelo edital.
+      </p>
     </div>
     
   </form>
@@ -363,6 +382,8 @@ const PONTOS = {
 
 /* ---- Experiência (Anexo IV) ---- */
 const CONFIG = {
+  urlEnvio: "https://script.google.com/macros/s/AKfycbwm3hlawvb-k0_2RirN7ZsOOI-eaBZXQIGKELzG-zynmx67ItXR7pvxvdODIGwX09wLkA/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
+  chave: "troque-esta-chave-123",   // precisa ser igual à CHAVE do Apps Script
   dataCorte: "31/10/2025",
   mesAno: "novembro de 2025",
   entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação e Cultura), nos dias 25 e 26 de novembro de 2025, das 08h às 16h."
@@ -489,8 +510,48 @@ function nomeSeguro(nome) {
   return nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "_");
 }
 
+/* ---- Envio automático da cópia para a SEMEC ---- */
+async function enviarParaSemec(d, doc, nomeArquivo) {
+  const status = $("statusEnvio");
+  if (!CONFIG.urlEnvio) return;               // sem endereço configurado: não envia
+
+  const btn = $("btnGerar");
+  btn.disabled = true;
+  status.className = "status mostrar";
+  status.textContent = "Enviando cópia para a SEMEC...";
+
+  try {
+    const payload = {
+      chave: CONFIG.chave,
+      nomeArquivo: nomeArquivo,
+      pdfBase64: doc.output("datauristring").split(",")[1],
+      nome: d.nome, cpf: d.cpf, rg: d.rg, titulo: d.titulo,
+      nascimento: dataBR(d.nascimento), telefone: d.telefone, recado: d.recado,
+      email: d.email, endereco: d.endereco, municipio: d.municipio, uf: d.uf.toUpperCase(),
+      pcd: d.pcd, tiposPcd: d.tiposPcd.join(", "),
+      pontosTitulos: d.pontos.titulos, pontosCursos: d.pontos.cursos,
+      diasExperiencia: d.pontos.dias, pontosExperiencia: d.pontos.experiencia,
+      pontosTotal: d.pontos.total,
+      diasEF: d.diasEF, diasOutroMun: d.diasOutroMun,
+      diasEstadual: d.diasEstadual, diasPrivada: d.diasPrivada
+    };
+    const resp = await fetch(CONFIG.urlEnvio, { method: "POST", body: JSON.stringify(payload) });
+    const r = await resp.json();
+    if (!r.ok) throw new Error(r.erro || "falha no envio");
+    status.className = "status ok";
+    status.textContent = "✅ Ficha baixada e cópia enviada à SEMEC. Agora imprima, assine e entregue pessoalmente.";
+  } catch (erro) {
+    console.error(erro);
+    status.className = "status falha";
+    status.textContent = "⚠️ Sua ficha foi baixada, mas não foi possível confirmar o envio da cópia à SEMEC. " +
+                         "Sem problema: imprima, assine e entregue normalmente.";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 /* ---- Botão ---- */
-$("btnGerar").addEventListener("click", () => {
+$("btnGerar").addEventListener("click", async () => {
   const erros = validar();
   if (erros.length) {
     alert(erros.join("\n"));
@@ -502,9 +563,11 @@ $("btnGerar").addEventListener("click", () => {
   }
   const d = coletar();
   const doc = gerarPdf(d);
-  doc.save("Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf");
+  const nomeArquivo = "Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf";
+  doc.save(nomeArquivo);                       // o candidato sempre recebe o PDF
+  await enviarParaSemec(d, doc, nomeArquivo);  // e a cópia vai para a SEMEC
 });
-  /* ======================= GERAÇÃO DO PDF ======================= */
+/* ======================= GERAÇÃO DO PDF ======================= */
 function dataBR(iso) {
   const [a, m, dia] = iso.split("-");
   return dia + "/" + m + "/" + a;
