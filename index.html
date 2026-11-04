@@ -112,6 +112,13 @@ input[type=checkbox] { width: auto; }
                   border-radius: 99px; }
     .btn-edital:hover { filter: brightness(0.94); }
     .btn-gerar:disabled { opacity: .6; cursor: wait; }
+    .btn-rh { border: 1px solid var(--verde); background: #fff; color: var(--verde); font-weight: bold;
+              font-size: 13px; padding: 8px 14px; border-radius: 99px; cursor: pointer; }
+    .btn-rh:disabled { opacity: .6; cursor: wait; }
+    .rh-msg { margin-top: 6px; font-size: 13px; color: #3d4b5c; }
+    .rh-msg.ok { color: #14532d; }
+    .rh-msg.falha { color: #8a5a00; }
+    input[readonly] { background: #eef3fb; }
     .aviso-envio { font-size: 12.5px; color: #5d6b7c; background: #f3f6fa; border: 1px solid var(--borda);
                    border-radius: 10px; padding: 10px 12px; margin: 12px 0 0; line-height: 1.5; }
     .status { display: none; margin-top: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; }
@@ -295,14 +302,17 @@ input[type=checkbox] { width: auto; }
     <section class="anexo">
       <h2 class="anexo-titulo">ANEXO IV <small>Ficha somatória do quadro de títulos e experiência profissional</small></h2>
       <fieldset>
-      <legend>Cursos e graduação</legend>
+      <legend>Cursos</legend>
       <div class="aviso">
         Declare <strong>somente</strong> o que você consegue comprovar com certificado ou diploma.
-        Cada título vale uma única vez e precisa ter <strong>carga horária</strong>.
         A pós-graduação usada como requisito mínimo do cargo <strong>não</strong> conta aqui.
+        <br><br>
+        Será aceito <strong>1 (um)</strong> para doutorado em Educação, <strong>1 (um)</strong> para mestrado em
+        Educação e <strong>1 (um)</strong> para pós-graduação com no mínimo 360h na área da Educação. Você pode
+        marcar mais de um tipo de título, mas será válido <strong>apenas 1 de cada</strong>.
       </div>
 
-      <h3 class="sub">Graduação e pós-graduação na área da Educação</h3>
+      <h3 class="sub">Títulos na área da Educação</h3>
       <div class="check">
         <label><input type="checkbox" id="doutorado"> Doutorado em Educação <em>(10 pontos)</em></label>
         <label><input type="checkbox" id="mestrado"> Mestrado em Educação <em>(7 pontos)</em></label>
@@ -341,7 +351,7 @@ input[type=checkbox] { width: auto; }
       </div>
 
       <div class="pontos">
-        Graduação e pós-graduação: <strong id="ptsTitulos">0</strong> pontos<br>
+        Títulos (doutorado, mestrado, pós): <strong id="ptsTitulos">0</strong> pontos<br>
         Cursos de capacitação: <strong id="ptsCursos">0</strong> pontos<br>
         <span class="total">Subtotal: <strong id="ptsSub">0</strong> pontos</span>
       </div>
@@ -351,33 +361,51 @@ input[type=checkbox] { width: auto; }
       <legend>Experiência profissional no cargo</legend>
       <div class="aviso">
         Informe os <strong>dias</strong> trabalhados como <strong>contratado ou designado</strong>,
-        somente no cargo pleiteado, contados até <strong class="dataCorte"></strong>.
-        <strong>Não valem</strong> estágio, monitoria, bolsa de estudos, atividades voluntárias
-        nem tempo de efetivo.
+        <strong>na rede municipal de Espera Feliz</strong>, somente no cargo pleiteado, contados até
+        <strong class="dataCorte"></strong>. <strong>Não valem</strong> estágio, monitoria, bolsa de estudos,
+        atividades voluntárias nem tempo de efetivo.
+        <br><br>
+        A pontuação refere-se aos <strong>últimos 36 meses trabalhados</strong> (máximo de 36 pontos).
+        Vale <strong>1 ponto a cada 30 dias completos</strong> e só contam <strong>números inteiros</strong>: o que
+        sobrar de 30 dias não conta (ex.: 288 dias = 9 pontos; os 18 dias restantes são desprezados).
       </div>
       <div class="grade">
-        <div>
+        <div class="full">
           <label for="diasEF">Municipal de Espera Feliz (dias)</label>
-          <input type="number" id="diasEF" min="0" inputmode="numeric" placeholder="0">
-        </div>
-        <div>
-          <label for="diasOutroMun">Municipal de outro município (dias)</label>
-          <input type="number" id="diasOutroMun" min="0" inputmode="numeric" placeholder="0">
-        </div>
-        <div>
-          <label for="diasEstadual">Estadual (dias)</label>
-          <input type="number" id="diasEstadual" min="0" inputmode="numeric" placeholder="0">
-        </div>
-        <div>
-          <label for="diasPrivada">Iniciativa privada (dias)</label>
-          <input type="number" id="diasPrivada" min="0" inputmode="numeric" placeholder="0">
+          <input type="number" id="diasEF" min="0" step="1" inputmode="numeric" placeholder="0">
+          <div id="blocoRH" style="display:none; margin-top:8px">
+            <button type="button" class="btn-rh" id="btnRH">Consultar meu tempo no RH</button>
+            <div class="rh-msg" id="msgRH" role="status"></div>
+          </div>
         </div>
       </div>
 
       <div class="pontos">
-        Total de dias informados: <strong id="ptsDias">0</strong><br>
+        Dias informados: <strong id="ptsDias">0</strong><br>
         Pontos de experiência: <strong id="ptsExp">0</strong> <small>(máximo 36)</small><br>
         <span class="total">Pontuação total declarada: <strong id="ptsTotal">0</strong> pontos</span>
+      </div>
+    </fieldset>
+
+      <fieldset>
+      <legend>Outras experiências (somente para desempate)</legend>
+      <div class="aviso">
+        Estas informações <strong>não geram pontos</strong>. Servem apenas como critério de desempate.
+        Preencha somente se tiver, no cargo pleiteado.
+      </div>
+      <div class="grade">
+        <div>
+          <label for="diasOutroMun">Municipal de outro município (dias)</label>
+          <input type="number" id="diasOutroMun" min="0" step="1" inputmode="numeric" placeholder="0">
+        </div>
+        <div>
+          <label for="diasEstadual">Estadual (dias)</label>
+          <input type="number" id="diasEstadual" min="0" step="1" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="full">
+          <label for="diasPrivada">Iniciativa privada (dias)</label>
+          <input type="number" id="diasPrivada" min="0" step="1" inputmode="numeric" placeholder="0">
+        </div>
       </div>
     </fieldset>
 
@@ -500,8 +528,10 @@ const PONTOS = {
   
 /* ---- Experiência (Anexo IV) ---- */
 const CONFIG = {
-  urlEnvio: "https://script.google.com/macros/s/AKfycbw22_oLK2fl3bs6lTxSBdlp5TJnUMr0T1I-blhzA84MaAG24FFlQMVnwZUglnp5dC_O/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
+  urlEnvio: "https://script.google.com/macros/s/AKfycbxpV0RK1LpmI3jyX_SfY58raZ80w0DBJdiMlLmH4rK323ACory1rCX2TH56k1dNEp-k/exec",   // cole aqui o endereço do Apps Script (termina em /exec)
   chave: "semed-2026",   // precisa ser igual à CHAVE do Apps Script   
+  consultaRH: false,        // mude para true quando a lista do RH estiver na aba "Tempo RH"
+  bloquearDiasRH: false,    // true = o valor trazido do RH não pode ser editado pelo candidato
   dataCorte: "31/10/2026",
   mesAno: "novembro de 2026",
   entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2026, das 08h às 16h."
@@ -531,8 +561,8 @@ function calcularPontos() {
     Number($("curso2").value) * PONTOS.curso2 +
     Number($("curso3").value) * PONTOS.curso3;
 
-  const dias = lerDias("diasEF") + lerDias("diasOutroMun") +
-               lerDias("diasEstadual") + lerDias("diasPrivada");
+  // Só o tempo na rede municipal de Espera Feliz gera pontos; os demais são só para desempate
+  const dias = lerDias("diasEF");
   const experiencia = Math.min(Math.floor(dias / DIAS_POR_PONTO), EXPERIENCIA_MAX);
 
   return { titulos, cursos, dias, experiencia, total: titulos + cursos + experiencia };
@@ -547,6 +577,14 @@ function atualizarPontos() {
   $("ptsExp").textContent = p.experiencia;
   $("ptsTotal").textContent = p.total;
 }
+/* Só números inteiros: se digitarem 9,6 vira 9 (o que sobra de 30 dias não conta) */
+["diasEF", "diasOutroMun", "diasEstadual", "diasPrivada"].forEach((id) => {
+  $(id).addEventListener("change", () => {
+    const v = parseFloat(String($(id).value).replace(",", "."));
+    $(id).value = isNaN(v) || v < 0 ? "" : String(Math.floor(v));
+  });
+});
+
 $("form").addEventListener("change", atualizarPontos);
 $("form").addEventListener("input", atualizarPontos);
 atualizarPontos();
@@ -704,6 +742,45 @@ async function enviarPdfSemed(d, numero, doc, nomeArquivo) {
     return false;
   }
 }
+
+/* ---- Consulta individual do tempo no RH (nome + nascimento; o servidor devolve só os dias da pessoa) ---- */
+if (CONFIG.consultaRH && CONFIG.urlEnvio) $("blocoRH").style.display = "block";
+["nome", "nascimento"].forEach((id) => $(id).addEventListener("input", () => { $("diasEF").readOnly = false; }));
+
+$("btnRH").addEventListener("click", async () => {
+  const msg = $("msgRH");
+  const nome = $("nome").value.trim(), nasc = $("nascimento").value;
+  msg.className = "rh-msg";
+  if (!nome || !nasc) {
+    msg.className = "rh-msg falha";
+    msg.textContent = "Preencha antes o nome completo e a data de nascimento (Anexo III).";
+    return;
+  }
+  const btn = $("btnRH");
+  btn.disabled = true;
+  msg.textContent = "Consultando...";
+  try {
+    const r = await chamarServidor({ chave: CONFIG.chave, acao: "consultarTempo", nome, nascimento: dataBR(nasc) });
+    if (r.encontrado) {
+      $("diasEF").value = r.dias;
+      $("diasEF").readOnly = !!CONFIG.bloquearDiasRH;
+      atualizarPontos();
+      msg.className = "rh-msg ok";
+      msg.textContent = "O RH registra " + r.dias + " dias até " + CONFIG.dataCorte + ". Se discordar, procure o RH.";
+    } else {
+      msg.className = "rh-msg falha";
+      msg.textContent = r.duplicado
+        ? "Encontramos mais de um registro com seus dados. Procure o RH."
+        : "Não encontramos seu nome na lista do RH. Confira o nome e a data de nascimento, ou informe os dias manualmente se você tiver como comprovar.";
+    }
+  } catch (erro) {
+    console.error(erro);
+    msg.className = "rh-msg falha";
+    msg.textContent = "Não foi possível consultar agora. Informe os dias manualmente.";
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 /* ---- Botão ---- */
 $("btnGerar").addEventListener("click", async () => {
@@ -948,12 +1025,16 @@ function gerarPdf(d, numero) {
            ["O limite de pontuação", "a ser colocado no quadro", "ao lado não deve exceder", "a 36 (trinta e seis) pontos."],
            d.pontos.experiencia);
 
-  doc.rect(L, 213, W, 36);
+  doc.rect(L, 213, W, 40);
   const base = "Tempo de experiência profissional no cargo pleiteado ";
   normal(base + "na esfera Municipal de Espera Feliz: " + d.diasEF + " dias.", L + 3, 222);
   normal(base + "na esfera Municipal em outro município: " + d.diasOutroMun + " dias.", L + 3, 229.5);
   normal(base + "na esfera Estadual: " + d.diasEstadual + " dias.", L + 3, 237);
   normal(base + "na iniciativa Privada: " + d.diasPrivada + " dias.", L + 3, 244.5);
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7.5);
+  doc.text("Pontuam apenas os dias na esfera Municipal de Espera Feliz, referentes aos últimos 36 meses trabalhados (1 ponto a cada 30", L + 3, 247.8);
+  doc.text("dias completos, apenas números inteiros). As demais esferas são informadas somente para fins de desempate.", L + 3, 251);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
