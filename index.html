@@ -107,11 +107,20 @@ input[type=checkbox] { width: auto; }
     .cargo-nome { margin: 0 0 8px; font-size: 14px; font-weight: bold; }
     .atribuicoes { margin: 0 0 14px; padding-left: 20px; font-size: 14px; line-height: 1.55; }
     .atribuicoes li { margin-bottom: 6px; }
-    .btn-edital { display: inline-block; margin-top: 12px; padding: 10px 18px; background: var(--verde);
-                  color: #fff; font-weight: bold; font-size: 14px; text-decoration: none;
-                  border-radius: 99px; }
-    .btn-edital:hover { filter: brightness(0.94); }
+    .btn-edital { display: inline-block; margin-top: 12px; padding: 12px 22px; background: #e81820;
+                  color: #fff; font-weight: bold; font-size: 15px; letter-spacing: .4px; text-decoration: none;
+                  border-radius: 99px; box-shadow: 0 2px 6px rgba(232,24,32,.35); }
+    .btn-edital:hover { filter: brightness(0.92); }
     .btn-gerar:disabled { opacity: .6; cursor: wait; }
+    .atestado-aviso { margin: 0 0 14px; padding: 10px 12px; font-size: 13px; background: #fff8e1;
+                      border: 1px solid #f1dc9a; border-radius: 10px; }
+    .atestado-titulo { margin: 0 0 6px; text-align: center; font-weight: bold; font-size: 14px; }
+    .atestado-titulo.vermelho { color: #e81820; margin-bottom: 14px; }
+    .atestado { border: 1px solid #1d2733; padding: 18px 20px; font-size: 14px; line-height: 1.7; background: #fff; }
+    .atestado p { margin: 0 0 14px; }
+    .atestado-data { margin-top: 22px !important; }
+    .atestado-assinatura { margin-top: 34px !important; margin-bottom: 0 !important; text-align: center; }
+    .atestado-assinatura span { display: block; margin-top: 2px; font-size: 13px; text-align: left; }
     .btn-rh { border: 1px solid var(--verde); background: #fff; color: var(--verde); font-weight: bold;
               font-size: 13px; padding: 8px 14px; border-radius: 99px; cursor: pointer; }
     .btn-rh:disabled { opacity: .6; cursor: wait; }
@@ -137,7 +146,7 @@ input[type=checkbox] { width: auto; }
       <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
       <p>Secretaria Municipal de Educação</p>
       <p>Processo Seletivo Simplificado – Edital 01/2026 | Assistente Educacional MAE-A</p>
-      <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 Ler o edital completo (PDF)</a>
+      <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 CLIQUE PARA LER O EDITAL COMPLETO</a>
     </div>
     <div class="logo"><img src="logo-prefeitura.png" alt="Prefeitura Municipal de Espera Feliz"></div>
   </div>
@@ -254,7 +263,7 @@ input[type=checkbox] { width: auto; }
     </fieldset>
 
       <fieldset>
-      <legend>Portador de necessidades especiais</legend>
+      <legend>É pessoa com deficiência</legend>
       <div class="opcoes">
         <label><input type="radio" name="pcd" value="Sim"><span>Sim</span></label>
         <label><input type="radio" name="pcd" value="Não"><span>Não</span></label>
@@ -270,8 +279,8 @@ input[type=checkbox] { width: auto; }
         <label><input type="checkbox" name="tipoPcd" value="Mental/intelectual"> Mental/intelectual</label>
         <label><input type="checkbox" name="tipoPcd" value="Condutas típicas"> Condutas típicas</label>
         <div class="aviso" style="margin-top:10px">
-          Candidatos com deficiência devem entregar, junto com a inscrição, o atestado médico
-          conforme o <strong>Anexo VIII</strong> do edital.
+          Candidatos com deficiência devem entregar, junto com a inscrição, o atestado médico.
+          Veja o modelo no <strong>Anexo V</strong> desta página (<strong>Anexo VIII</strong> do edital).
         </div>
       </div>
     </fieldset>
@@ -413,12 +422,42 @@ input[type=checkbox] { width: auto; }
       <legend>Declaração</legend>
       <label class="decl">
         <input type="checkbox" id="declaracao">
-        <span>Atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
+        <span>Li e atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
           Simplificado nº 01/2026 e declaro que as informações prestadas são verdadeiras, ciente de
           que serão comprovadas na convocação e de que a falsidade implica eliminação.</span>
       </label>
     </fieldset>
 
+    </section>
+
+    <!-- ===================== ANEXO V ===================== -->
+    <section class="anexo">
+      <h2 class="anexo-titulo">ANEXO V <small>Modelo de atestado médico (corresponde ao Anexo VIII do edital)</small></h2>
+      <fieldset>
+        <legend>Somente para consulta</legend>
+        <p class="atestado-aviso">
+          Este modelo é <strong>apenas informativo</strong>: não faz parte da ficha e <strong>não precisa ser
+          impresso desta página</strong>. Candidatos com deficiência devem entregar o atestado médico, junto com
+          a inscrição, no envelope lacrado.
+        </p>
+        <p class="atestado-titulo">PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2026</p>
+        <p class="atestado-titulo vermelho">MODELO DE ATESTADO MÉDICO PARA PESSOA COM DEFICIÊNCIA (PCD)</p>
+        <div class="atestado">
+          <p>Atesto para os devidos de direito que o (a) Senhor(a) ______________________________,</p>
+          <p>é portador da deficiência ______________________________________,<br>
+             em conformidade com o Código Internacional da Doença (CID) _______________,<br>
+             sendo compatível a deficiência apresentada pelo paciente com as atribuições do cargo de
+             Assistente Educacional MAE- A, disponibilizado no Processo Seletivo Simplificado, conforme
+             Edital nº 01/ 2026.</p>
+          <p class="atestado-data">Espera Feliz/MG, ________ de ________________________ de 2026.</p>
+          <p class="atestado-assinatura">__________________________________________________________<br>
+            <span>Nome, assinatura e número do CRM do médico especialista na área de deficiência/doença do
+            candidato e carimbo, <u>caso contrário, o atestado não terá validade.</u></span></p>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- ===================== GERAR FICHA ===================== -->
       <div class="acoes">
       <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
       <p class="nota">Depois de gerar, <strong>imprima e assine</strong> as fichas e entregue
@@ -428,13 +467,12 @@ input[type=checkbox] { width: auto; }
         <strong>Aviso:</strong> ao gerar a ficha, sua <strong>pré-inscrição é registrada automaticamente na
         Secretaria Municipal de Educação</strong> e você recebe um <strong>número de pré-inscrição</strong>.
         Uma <strong>cópia da sua ficha em PDF</strong> (que contém seus dados pessoais, como CPF, RG, título de
-        eleitor, endereço e, se informado, necessidades especiais) é <strong>enviada por e-mail à Secretaria</strong>
+        eleitor, endereço e, se informado, deficiência) é <strong>enviada por e-mail à Secretaria</strong>
         para organização do processo seletivo, e os dados de contato e a pontuação ficam em planilha de controle.
         Os dados são tratados conforme a LGPD, somente para esta finalidade. O registro
         <strong>não substitui</strong> a entrega presencial da inscrição em envelope lacrado, exigida pelo edital.
       </p>
     </div>
-    </section>
 
   </form>
 </div>
@@ -627,9 +665,9 @@ function validar() {
 
   const pcd = document.querySelector('input[name="pcd"]:checked');
   if (!pcd) {
-    erros.push("Informe se é portador de necessidades especiais (Anexo III).");
+    erros.push("Informe se é pessoa com deficiência (Anexo III).");
   } else if (pcd.value === "Sim" && !document.querySelector('input[name="tipoPcd"]:checked')) {
-    erros.push("Marque o tipo de necessidade especial (Anexo III).");
+    erros.push("Marque o tipo de deficiência (Anexo III).");
   }
 
   const faltaResposta = REQUISITOS.some((_, i) => !document.querySelector('input[name="req' + i + '"]:checked'));
@@ -954,7 +992,7 @@ function gerarPdf(d, numero) {
 
   doc.setFillColor(225, 225, 225);
   doc.rect(L, 148, W, 8, "FD");
-  negrito("PORTADOR DE NECESSIDADES ESPECIAIS", 105, 153.5, { align: "center" });
+  negrito("É PESSOA COM DEFICIÊNCIA", 105, 153.5, { align: "center" });
   normal(marca(d.pcd === "Sim") + " SIM            " + marca(d.pcd === "Não") + " NÃO", 105, 164, { align: "center" });
   negrito("Se sim, qual?", L + 8, 172);
   const tipos = Array.from(document.querySelectorAll('input[name="tipoPcd"]')).map((c) => c.value);
