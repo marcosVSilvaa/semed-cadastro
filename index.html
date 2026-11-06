@@ -463,6 +463,7 @@ input[type=checkbox] { width: auto; }
 
     <!-- ===================== GERAR FICHA ===================== -->
       <div class="acoes">
+      <div class="status" id="avisoJanela" role="status" style="margin:0 0 10px"></div>
       <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
       <p class="nota">Depois de gerar, <strong>imprima a ficha</strong> e guarde-a: você deverá
         apresentá-la, com os documentos originais e cópias, <strong>somente no ato da convocação</strong>.
@@ -576,7 +577,9 @@ const CONFIG = {
   consultaRH: true,        // mude para true quando a lista do RH estiver na aba "Tempo RH"
   bloquearDiasRH: true,    // true = o valor trazido do RH não pode ser editado pelo candidato
   dataCorte: "31/10/2026",
-  mesAno: "novembro de 2026"
+  mesAno: "novembro de 2026",
+  // Período de inscrições (horário de Brasília). Para TESTAR antes do prazo, troque ativa para false.
+  janela: { ativa: true, abertura: "2026-11-25T08:00:00-03:00", encerramento: "2026-11-26T18:00:00-03:00" }
 };
 
 
@@ -779,6 +782,7 @@ async function registrarPreInscricao(d) {
     return { numero: r.numero, registrada: true };
   } catch (erro) {
     console.error(erro);
+    if (/fora do período/.test(String(erro.message))) return { foraPrazo: true };
     return { numero: numeroProvisorio(), registrada: false };
   }
 }
@@ -840,8 +844,38 @@ $("btnRH").addEventListener("click", async () => {
   }
 });
 
+/* ---- Período de inscrições: o botão só funciona entre a abertura e o encerramento ---- */
+function statusJanela() {
+  const j = CONFIG.janela;
+  if (!j || !j.ativa) return "aberta";
+  const agora = Date.now();
+  if (agora < new Date(j.abertura).getTime()) return "antes";
+  if (agora >= new Date(j.encerramento).getTime()) return "depois";
+  return "aberta";
+}
+let enviando = false;
+function aplicarJanela() {
+  const st = statusJanela();
+  const aviso = $("avisoJanela");
+  $("btnGerar").disabled = enviando || st !== "aberta";
+  if (st === "antes") {
+    aviso.className = "status falha";
+    aviso.textContent = "As inscrições abrem em 25/11/2026, às 08h (horário de Brasília). Você já pode ler o edital e conferir o formulário, mas só poderá gerar a ficha a partir dessa data.";
+  } else if (st === "depois") {
+    aviso.className = "status falha";
+    aviso.textContent = "As inscrições foram encerradas em 26/11/2026, às 18h (horário de Brasília).";
+  } else {
+    aviso.className = "status";
+    aviso.textContent = "";
+  }
+  return st;
+}
+aplicarJanela();
+setInterval(aplicarJanela, 15000);
+
 /* ---- Botão ---- */
 $("btnGerar").addEventListener("click", async () => {
+  if (aplicarJanela() !== "aberta") return;
   const erros = validar();
   if (erros.length) {
     alert(erros.join("\n"));
@@ -854,6 +888,7 @@ $("btnGerar").addEventListener("click", async () => {
 
   const btn = $("btnGerar");
   const status = $("statusEnvio");
+  enviando = true;
   btn.disabled = true;
   status.className = "status";
   status.textContent = "";
@@ -865,6 +900,11 @@ $("btnGerar").addEventListener("click", async () => {
       status.textContent = "Registrando sua pré-inscrição e enviando a ficha... aguarde.";
     }
     const reg = await registrarPreInscricao(d);
+    if (reg.foraPrazo) {
+      status.className = "status falha";
+      status.textContent = "⚠️ As inscrições estão fora do período (25/11/2026 às 08h até 26/11/2026 às 18h, horário de Brasília). Sua ficha não foi gerada.";
+      return;
+    }
 
     const doc = gerarPdf(d, reg.numero);
     const nomeArquivo = "Ficha_Inscricao_" + nomeSeguro(d.nome) + ".pdf";
@@ -896,7 +936,8 @@ $("btnGerar").addEventListener("click", async () => {
     status.className = "status falha";
     status.textContent = "⚠️ Não foi possível gerar a ficha. Recarregue a página e tente novamente.";
   } finally {
-    btn.disabled = false;
+    enviando = false;
+    aplicarJanela();
   }
 });
 /* ======================= GERAÇÃO DO PDF ======================= */
