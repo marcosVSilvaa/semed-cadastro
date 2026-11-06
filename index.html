@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pré-inscrição | Edital 01/2026 | SEMED</title>
+  <title>Pré-inscrição | EDITAL 01/2026 | SEMED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     
@@ -121,8 +121,12 @@ input[type=checkbox] { width: auto; }
     .atestado-data { margin-top: 22px !important; }
     .atestado-assinatura { margin-top: 34px !important; margin-bottom: 0 !important; text-align: center; }
     .atestado-assinatura span { display: block; margin-top: 2px; font-size: 13px; text-align: left; }
-    .btn-rh { border: 1px solid var(--verde); background: #fff; color: var(--verde); font-weight: bold;
-              font-size: 13px; padding: 8px 14px; border-radius: 99px; cursor: pointer; }
+    .btn-rh { border: 0; background: #e81820; color: #fff; font-weight: bold; text-transform: uppercase;
+              font-size: 13px; padding: 10px 16px; border-radius: 99px; cursor: pointer; letter-spacing: .3px;
+              line-height: 1.3; box-shadow: 0 2px 6px rgba(232,24,32,.35); }
+    .btn-rh:hover { filter: brightness(0.92); }
+    .desempate-info { font-size: 14px; margin: 0 0 10px; }
+    .leitura { background: #eef3fb; border: 1px solid var(--borda); border-radius: 8px; padding: 10px; font-size: 15px; min-height: 40px; }
     .btn-rh:disabled { opacity: .6; cursor: wait; }
     .rh-msg { margin-top: 6px; font-size: 13px; color: #3d4b5c; }
     .rh-msg.ok { color: #14532d; }
@@ -145,8 +149,8 @@ input[type=checkbox] { width: auto; }
     <div class="titulos">
       <h1>Prefeitura Municipal de Espera Feliz – MG</h1>
       <p>Secretaria Municipal de Educação</p>
-      <p>Processo Seletivo Simplificado – Edital 01/2026 | Assistente Educacional MAE-A</p>
-      <a class="btn-edital" href="edital-01-2025.pdf" target="_blank" rel="noopener">📄 CLIQUE PARA LER O EDITAL COMPLETO</a>
+      <p>Processo Seletivo Simplificado – EDITAL 01/2026 | Assistente Educacional MAE-A</p>
+      <a class="btn-edital" href="edital-01-2026.pdf" target="_blank" rel="noopener">📄 CLIQUE PARA LER O EDITAL COMPLETO</a>
     </div>
     <div class="logo"><img src="logo-prefeitura.png" alt="Prefeitura Municipal de Espera Feliz"></div>
   </div>
@@ -166,14 +170,14 @@ input[type=checkbox] { width: auto; }
               <tr><th>Data</th><th>Ação</th></tr>
             </thead>
             <tbody>
-              <tr><td class="data">05/11/2026</td><td>Publicação do Edital</td></tr>
-              <tr class="destaque"><td class="data">25/11/2026</td><td>Abertura das Inscrições</td></tr>
-              <tr class="destaque"><td class="data">26/11/2026</td><td>Encerramento das Inscrições</td></tr>
+              <tr><td class="data">06/11/2026</td><td>Publicação do Edital</td></tr>
+              <tr class="destaque"><td class="data">25/11/2026</td><td>Abertura das Inscrições (às 08h)</td></tr>
+              <tr class="destaque"><td class="data">26/11/2026</td><td>Encerramento das Inscrições (às 18h)</td></tr>
               <tr><td class="data">30/11/2026</td><td>Divulgação do Resultado Preliminar</td></tr>
               <tr><td class="data">02/12/2026</td><td>Prazo para Interposição de Recursos contra o Resultado Preliminar</td></tr>
               <tr><td class="data">03/12/2026</td><td>Resultado da Interposição de Recursos</td></tr>
               <tr><td class="data">07/12/2026</td><td>Divulgação do Resultado Final e Homologação do Processo Seletivo Simplificado</td></tr>
-              <tr><td class="data"><small>A partir de</small>27/01/2027</td><td>Chamadas: Edital de Convocação</td></tr>
+              <tr><td class="data"><small>A partir de</small>25/01/2027</td><td>Chamadas: Edital de Convocação</td></tr>
             </tbody>
           </table>
         </div>
@@ -279,8 +283,8 @@ input[type=checkbox] { width: auto; }
         <label><input type="checkbox" name="tipoPcd" value="Mental/intelectual"> Mental/intelectual</label>
         <label><input type="checkbox" name="tipoPcd" value="Condutas típicas"> Condutas típicas</label>
         <div class="aviso" style="margin-top:10px">
-          Candidatos com deficiência devem entregar, junto com a inscrição, o atestado médico.
-          Veja o modelo no <strong>Anexo V</strong> desta página (<strong>Anexo VIII</strong> do edital).
+          Candidatos com deficiência devem apresentar o atestado médico conforme o edital (item 3.3).
+          Veja o modelo no <strong>Anexo V</strong> desta página.
         </div>
       </div>
     </fieldset>
@@ -294,7 +298,7 @@ input[type=checkbox] { width: auto; }
       <div id="listaReq"></div>
       <div class="bloqueio" id="bloqueio">
         <strong>Atenção:</strong> pelas suas respostas, você não atende a todos os requisitos do
-        item 3.2 do edital e não poderá se inscrever neste processo seletivo.
+        item 2.3 do edital e não poderá se inscrever neste processo seletivo.
       </div>
     </fieldset>
 
@@ -370,7 +374,7 @@ input[type=checkbox] { width: auto; }
       <legend>Experiência profissional no cargo</legend>
       <div class="aviso">
         Informe os <strong>dias</strong> trabalhados como <strong>contratado ou designado</strong>,
-        <strong>na rede municipal de Espera Feliz</strong>, somente no cargo pleiteado, contados até
+        no cargo de <strong>Assistente Educacional</strong>, contados até
         <strong class="dataCorte"></strong>. <strong>Não valem</strong> estágio, monitoria, bolsa de estudos,
         atividades voluntárias nem tempo de efetivo.
         <br><br>
@@ -383,7 +387,7 @@ input[type=checkbox] { width: auto; }
           <label for="diasEF">Municipal de Espera Feliz (dias)</label>
           <input type="number" id="diasEF" min="0" step="1" inputmode="numeric" placeholder="0">
           <div id="blocoRH" style="display:none; margin-top:8px">
-            <button type="button" class="btn-rh" id="btnRH">Consultar meu tempo no RH</button>
+            <button type="button" class="btn-rh" id="btnRH">CLIQUE AQUI PARA CONSULTAR O TEMPO DE SERVIÇO NO CARGO DE ASSISTENTE EDUCACIONAL NA SEMED</button>
             <div class="rh-msg" id="msgRH" role="status"></div>
           </div>
         </div>
@@ -397,23 +401,27 @@ input[type=checkbox] { width: auto; }
     </fieldset>
 
       <fieldset>
-      <legend>Outras experiências (somente para desempate)</legend>
-      <div class="aviso">
-        Estas informações <strong>não geram pontos</strong>. Servem apenas como critério de desempate.
-        Preencha somente se tiver, no cargo pleiteado.
-      </div>
+      <legend>Critérios de desempate</legend>
+      <p class="desempate-info">Informações referentes aos critérios de desempate de acordo com o item 7 do EDITAL 01/2026.</p>
       <div class="grade">
-        <div>
-          <label for="diasOutroMun">Municipal de outro município (dias)</label>
-          <input type="number" id="diasOutroMun" min="0" step="1" inputmode="numeric" placeholder="0">
-        </div>
-        <div>
-          <label for="diasEstadual">Estadual (dias)</label>
-          <input type="number" id="diasEstadual" min="0" step="1" inputmode="numeric" placeholder="0">
+        <div class="full">
+          <label>Tempo de serviço no cargo de Assistente Educacional (de acordo com a listagem)</label>
+          <div class="leitura"><strong id="desDias">0</strong> dias</div>
         </div>
         <div class="full">
-          <label for="diasPrivada">Iniciativa privada (dias)</label>
-          <input type="number" id="diasPrivada" min="0" step="1" inputmode="numeric" placeholder="0">
+          <label for="diasOutro">Tempo de serviço a mais como Assistente Educacional, em outro local (dias)</label>
+          <input type="number" id="diasOutro" min="0" step="1" inputmode="numeric" placeholder="0">
+          <div class="aviso" style="margin:8px 0 0">
+            Preencha <strong>somente</strong> se você teve tempo de serviço como Assistente Educacional
+            <strong>além do que consta na listagem</strong> (por exemplo, em outro município ou na rede estadual),
+            contado até <strong class="dataCorte"></strong>. Esse tempo precisará ser comprovado na convocação com a
+            <strong>Certidão de Contagem de Tempo de Serviço</strong> (item 8.3, j, do edital). Este campo é
+            informativo e <strong>não altera a pontuação</strong> calculada acima.
+          </div>
+        </div>
+        <div class="full">
+          <label>Idade em <span class="dataCorte"></span> (calculada pela data de nascimento do Anexo III)</label>
+          <div class="leitura" id="desIdade">Preencha a data de nascimento no Anexo III.</div>
         </div>
       </div>
     </fieldset>
@@ -422,8 +430,8 @@ input[type=checkbox] { width: auto; }
       <legend>Declaração</legend>
       <label class="decl">
         <input type="checkbox" id="declaracao">
-        <span>Li e atesto ter conhecimento de todas as regras previstas no Edital do Processo Seletivo
-          Simplificado nº 01/2026 e declaro que as informações prestadas são verdadeiras, ciente de
+        <span>Li e atesto ter conhecimento de todas as regras previstas no EDITAL Nº 01/2026 do Processo
+          Seletivo Simplificado e declaro que as informações prestadas são verdadeiras, ciente de
           que serão comprovadas na convocação e de que a falsidade implica eliminação.</span>
       </label>
     </fieldset>
@@ -432,13 +440,12 @@ input[type=checkbox] { width: auto; }
 
     <!-- ===================== ANEXO V ===================== -->
     <section class="anexo">
-      <h2 class="anexo-titulo">ANEXO V <small>Modelo de atestado médico (corresponde ao Anexo VIII do edital)</small></h2>
+      <h2 class="anexo-titulo">ANEXO V <small>Modelo de atestado médico para pessoa com deficiência</small></h2>
       <fieldset>
         <legend>Somente para consulta</legend>
         <p class="atestado-aviso">
           Este modelo é <strong>apenas informativo</strong>: não faz parte da ficha e <strong>não precisa ser
-          impresso desta página</strong>. Candidatos com deficiência devem entregar o atestado médico, junto com
-          a inscrição, no envelope lacrado.
+          enviado agora</strong>. Candidatos com deficiência devem apresentar o atestado médico conforme o edital.
         </p>
         <p class="atestado-titulo">PROCESSO SELETIVO SIMPLIFICADO EDITAL Nº 01/2026</p>
         <p class="atestado-titulo vermelho">MODELO DE ATESTADO MÉDICO PARA PESSOA COM DEFICIÊNCIA (PCD)</p>
@@ -448,7 +455,7 @@ input[type=checkbox] { width: auto; }
              em conformidade com o Código Internacional da Doença (CID) _______________,<br>
              sendo compatível a deficiência apresentada pelo paciente com as atribuições do cargo de
              Assistente Educacional MAE- A, disponibilizado no Processo Seletivo Simplificado, conforme
-             Edital nº 01/ 2026.</p>
+             EDITAL Nº 01/2026.</p>
           <p class="atestado-data">Espera Feliz/MG, ________ de ________________________ de 2026.</p>
           <p class="atestado-assinatura">__________________________________________________________<br>
             <span>Nome, assinatura e número do CRM do médico especialista na área de deficiência/doença do
@@ -460,8 +467,9 @@ input[type=checkbox] { width: auto; }
     <!-- ===================== GERAR FICHA ===================== -->
       <div class="acoes">
       <button type="button" class="btn-gerar" id="btnGerar">Gerar ficha de inscrição (PDF)</button>
-      <p class="nota">Depois de gerar, <strong>imprima e assine</strong> as fichas e entregue
-        pessoalmente, em envelope lacrado, junto com os documentos.</p>
+      <p class="nota">Depois de gerar, <strong>imprima a ficha</strong> e guarde-a: você deverá
+        apresentá-la, com os documentos originais e cópias, <strong>somente no ato da convocação</strong>.
+        Não é preciso entregar nada agora.</p>
       <div class="status" id="statusEnvio" role="status"></div>
       <p class="aviso-envio">
         <strong>Aviso:</strong> ao gerar a ficha, sua <strong>pré-inscrição é registrada automaticamente na
@@ -469,8 +477,8 @@ input[type=checkbox] { width: auto; }
         Uma <strong>cópia da sua ficha em PDF</strong> (que contém seus dados pessoais, como CPF, RG, título de
         eleitor, endereço e, se informado, deficiência) é <strong>enviada por e-mail à Secretaria</strong>
         para organização do processo seletivo, e os dados de contato e a pontuação ficam em planilha de controle.
-        Os dados são tratados conforme a LGPD, somente para esta finalidade. O registro
-        <strong>não substitui</strong> a entrega presencial da inscrição em envelope lacrado, exigida pelo edital.
+        Os dados são tratados conforme a LGPD, somente para esta finalidade. Se houver mais de uma
+        inscrição, vale a última enviada dentro do prazo (item 2.6 do edital).
       </p>
     </div>
 
@@ -480,10 +488,10 @@ input[type=checkbox] { width: auto; }
 <script>
 const $ = (id) => document.getElementById(id);
 
-/* Requisitos do item 3.2 do edital (e formação do item 6.1) */
+/* Requisitos do item 2.3 do edital (e formação do item 4.1) */
 const REQUISITOS = [
   { texto: "Sou brasileiro(a) nato(a) ou naturalizado(a), nos termos da Constituição Federal." },
-  { texto: "Possuo Ensino Superior em Pedagogia ou Normal Superior, com Especialização em Educação Especial (item 6.1)." },
+  { texto: "Possuo Ensino Superior em Pedagogia ou Normal Superior, com Especialização em Educação Especial (item 4.1)." },
   { texto: "Conheço as exigências deste edital e estou de acordo com elas." },
   { texto: "Não me enquadro na vedação de acúmulo de cargos (art. 37, XVI, da Constituição Federal)." },
   { texto: "Estou em dia com as obrigações eleitorais." },
@@ -571,8 +579,7 @@ const CONFIG = {
   consultaRH: true,        // mude para true quando a lista do RH estiver na aba "Tempo RH"
   bloquearDiasRH: true,    // true = o valor trazido do RH não pode ser editado pelo candidato
   dataCorte: "31/10/2026",
-  mesAno: "novembro de 2026",
-  entrega: "Rua Ernesto Grillo, nº 103, sala 02, Centro, Espera Feliz/MG (ao lado da Secretaria Municipal de Educação), nos dias 25 e 26 de novembro de 2026, das 08h às 16h."
+  mesAno: "novembro de 2026"
 };
 
 
@@ -606,8 +613,28 @@ function calcularPontos() {
   return { titulos, cursos, dias, experiencia, total: titulos + cursos + experiencia };
 }
 
+/* Idade (anos, meses e dias) até a data de corte, calculada pela data de nascimento */
+function calcularIdade(nascISO, refBR) {
+  if (!nascISO) return null;
+  const [a, m, dd] = nascISO.split("-").map(Number);
+  const [rd, rm, ra] = refBR.split("/").map(Number);
+  let anos = ra - a, meses = rm - m, dias = rd - dd;
+  if (dias < 0) { meses--; dias += new Date(ra, rm - 1, 0).getDate(); }
+  if (meses < 0) { anos--; meses += 12; }
+  if (anos < 0) return null;
+  return { anos, meses, dias };
+}
+function textoIdade(nascISO) {
+  const i = calcularIdade(nascISO, CONFIG.dataCorte);
+  if (!i) return "";
+  const pl = (n, u, pu) => n + " " + (n === 1 ? u : pu);
+  return pl(i.anos, "ano", "anos") + ", " + pl(i.meses, "mês", "meses") + " e " + pl(i.dias, "dia", "dias");
+}
+
 function atualizarPontos() {
   const p = calcularPontos();
+  $("desDias").textContent = p.dias;
+  $("desIdade").textContent = textoIdade($("nascimento").value) || "Preencha a data de nascimento no Anexo III.";
   $("ptsTitulos").textContent = p.titulos;
   $("ptsCursos").textContent = p.cursos;
   $("ptsSub").textContent = p.titulos + p.cursos;
@@ -616,7 +643,7 @@ function atualizarPontos() {
   $("ptsTotal").textContent = p.total;
 }
 /* Só números inteiros: se digitarem 9,6 vira 9 (o que sobra de 30 dias não conta) */
-["diasEF", "diasOutroMun", "diasEstadual", "diasPrivada"].forEach((id) => {
+["diasEF", "diasOutro"].forEach((id) => {
   $(id).addEventListener("change", () => {
     const v = parseFloat(String($(id).value).replace(",", "."));
     $(id).value = isNaN(v) || v < 0 ? "" : String(Math.floor(v));
@@ -700,9 +727,8 @@ function coletar() {
   d.curso2 = Number($("curso2").value);
   d.curso3 = Number($("curso3").value);
   d.diasEF = lerDias("diasEF");
-  d.diasOutroMun = lerDias("diasOutroMun");
-  d.diasEstadual = lerDias("diasEstadual");
-  d.diasPrivada = lerDias("diasPrivada");
+  d.diasOutro = lerDias("diasOutro");
+  d.idade = textoIdade(d.nascimento);
   d.pontos = calcularPontos();
   return d;
 }
@@ -744,9 +770,7 @@ async function registrarPreInscricao(d) {
     nome: d.nome, nascimento: dataBR(d.nascimento), telefone: d.telefone, email: d.email,
     pontosTitulos: d.pontos.titulos, pontosCursos: d.pontos.cursos,
     diasExperiencia: d.pontos.dias, pontosExperiencia: d.pontos.experiencia,
-    pontosTotal: d.pontos.total,
-    diasEF: d.diasEF, diasOutroMun: d.diasOutroMun,
-    diasEstadual: d.diasEstadual, diasPrivada: d.diasPrivada
+    pontosTotal: d.pontos.total, diasOutro: d.diasOutro
   };
   const assinatura = JSON.stringify(payload);
   // Mesmos dados já registrados nesta página: reaproveita o número, sem criar outro registro
@@ -855,7 +879,7 @@ $("btnGerar").addEventListener("click", async () => {
       if (enviado) {
         status.className = "status ok";
         status.textContent = "✅ Pré-inscrição registrada: nº " + reg.numero + ". Sua ficha foi baixada e uma cópia " +
-                             "foi enviada à Secretaria. Agora imprima, assine e entregue pessoalmente, em envelope lacrado.";
+                             "foi enviada à Secretaria. Agora imprima a ficha e guarde-a para apresentar no ato da convocação.";
       } else {
         status.className = "status falha";
         status.textContent = "⚠️ Pré-inscrição registrada (nº " + reg.numero + ") e ficha baixada, mas a cópia " +
@@ -865,8 +889,8 @@ $("btnGerar").addEventListener("click", async () => {
     } else if (!reg.semServidor) {
       status.className = "status falha";
       status.textContent = "⚠️ Sua ficha foi baixada com o código provisório " + reg.numero + ", mas não foi " +
-                           "possível registrar a pré-inscrição eletronicamente. Sem problema: imprima, assine " +
-                           "e entregue normalmente.";
+                           "possível registrar a pré-inscrição eletronicamente. Imprima a ficha e guarde-a " +
+                           "para apresentar no ato da convocação.";
     } else {
       status.className = "status";
       status.textContent = "";
@@ -1077,13 +1101,15 @@ function gerarPdf(d, numero) {
            d.pontos.experiencia);
 
   negrito("Para fins de desempate.", L, 202);
-  normal("O tempo a ser computado é referente ao cargo de Assistente Educacional.", L, 207, undefined, 9);
+  normal("Informações referentes aos critérios de desempate de acordo com o item 7 do EDITAL 01/2026.", L, 207, undefined, 9);
   doc.rect(L, 210, W, 30);
-  const base = "Tempo de experiência profissional no cargo pleiteado ";
-  normal(base + "na esfera Municipal de Espera Feliz: " + d.diasEF + " dias.", L + 3, 216.5, undefined, 9);
-  normal(base + "na esfera Municipal em outro município: " + d.diasOutroMun + " dias.", L + 3, 223, undefined, 9);
-  normal(base + "na esfera Estadual: " + d.diasEstadual + " dias.", L + 3, 229.5, undefined, 9);
-  normal(base + "na iniciativa Privada: " + d.diasPrivada + " dias.", L + 3, 236, undefined, 9);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  const l1 = doc.splitTextToSize("Tempo de serviço no cargo de Assistente Educacional (de acordo com a listagem): " + d.diasEF + " dias.", W - 6);
+  doc.text(l1, L + 3, 216);
+  const l2 = doc.splitTextToSize("Tempo de serviço a mais como Assistente Educacional, em outro local (a comprovar com certidão): " + d.diasOutro + " dias.", W - 6);
+  doc.text(l2, L + 3, 223);
+  doc.text("Idade em " + CONFIG.dataCorte + ": " + d.idade + ".", L + 3, 234);
 
   /* Pontuação total */
   doc.setFont("helvetica", "italic");
@@ -1117,7 +1143,7 @@ function gerarPdf(d, numero) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(110);
-    doc.text("Documento gerado em " + agora + ". Deve ser impresso e assinado pelo candidato.", L, 291);
+    doc.text("Documento gerado em " + agora + ". Deve ser impresso e apresentado no ato da convocação.", L, 291);
     doc.text("Página " + i + " de " + n, R, 291, { align: "right" });
   }
   doc.setTextColor(0);
