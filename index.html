@@ -125,7 +125,10 @@ input[type=checkbox] { width: auto; }
               font-size: 13px; padding: 10px 16px; border-radius: 99px; cursor: pointer; letter-spacing: .3px;
               line-height: 1.3; box-shadow: 0 2px 6px rgba(232,24,32,.35); }
     .btn-rh:hover { filter: brightness(0.92); }
-    .desempate-info { font-size: 14px; margin: 0 0 10px; }
+    .item-edital { background: #f7f9fc; border: 1px solid var(--borda); border-radius: 10px; padding: 12px 14px; margin: 0 0 14px; font-size: 14px; line-height: 1.55; }
+    .item-edital p { margin: 0 0 8px; }
+    .item-edital p:last-child { margin-bottom: 0; }
+    .item-titulo { font-weight: bold; font-size: 15px; }
     .leitura { background: #eef3fb; border: 1px solid var(--borda); border-radius: 8px; padding: 10px; font-size: 15px; min-height: 40px; }
     .btn-rh:disabled { opacity: .6; cursor: wait; }
     .rh-msg { margin-top: 6px; font-size: 13px; color: #3d4b5c; }
@@ -402,22 +405,16 @@ input[type=checkbox] { width: auto; }
 
       <fieldset>
       <legend>Critérios de desempate</legend>
-      <p class="desempate-info">Informações referentes aos critérios de desempate de acordo com o item 7 do EDITAL 01/2026.</p>
+      <div class="item-edital">
+        <p class="item-titulo">7. DOS CRITÉRIOS DE DESEMPATE</p>
+        <p>7.1. No caso de empate, o desempate será, sucessivamente, em favor do candidato que possuir:</p>
+        <p>a) Maior tempo de serviço na Rede Municipal de Ensino de Espera Feliz na função do cargo de Assistente Educacional;</p>
+        <p>b) Maior idade, considerando-se dia, mês e ano de nascimento.</p>
+      </div>
       <div class="grade">
         <div class="full">
           <label>Tempo de serviço no cargo de Assistente Educacional (de acordo com a listagem)</label>
           <div class="leitura"><strong id="desDias">0</strong> dias</div>
-        </div>
-        <div class="full">
-          <label for="diasOutro">Tempo de serviço a mais como Assistente Educacional, em outro local (dias)</label>
-          <input type="number" id="diasOutro" min="0" step="1" inputmode="numeric" placeholder="0">
-          <div class="aviso" style="margin:8px 0 0">
-            Preencha <strong>somente</strong> se você teve tempo de serviço como Assistente Educacional
-            <strong>além do que consta na listagem</strong> (por exemplo, em outro município ou na rede estadual),
-            contado até <strong class="dataCorte"></strong>. Esse tempo precisará ser comprovado na convocação com a
-            <strong>Certidão de Contagem de Tempo de Serviço</strong> (item 8.3, j, do edital). Este campo é
-            informativo e <strong>não altera a pontuação</strong> calculada acima.
-          </div>
         </div>
         <div class="full">
           <label>Idade em <span class="dataCorte"></span> (calculada pela data de nascimento do Anexo III)</label>
@@ -643,7 +640,7 @@ function atualizarPontos() {
   $("ptsTotal").textContent = p.total;
 }
 /* Só números inteiros: se digitarem 9,6 vira 9 (o que sobra de 30 dias não conta) */
-["diasEF", "diasOutro"].forEach((id) => {
+["diasEF"].forEach((id) => {
   $(id).addEventListener("change", () => {
     const v = parseFloat(String($(id).value).replace(",", "."));
     $(id).value = isNaN(v) || v < 0 ? "" : String(Math.floor(v));
@@ -727,7 +724,6 @@ function coletar() {
   d.curso2 = Number($("curso2").value);
   d.curso3 = Number($("curso3").value);
   d.diasEF = lerDias("diasEF");
-  d.diasOutro = lerDias("diasOutro");
   d.idade = textoIdade(d.nascimento);
   d.pontos = calcularPontos();
   return d;
@@ -770,7 +766,7 @@ async function registrarPreInscricao(d) {
     nome: d.nome, nascimento: dataBR(d.nascimento), telefone: d.telefone, email: d.email,
     pontosTitulos: d.pontos.titulos, pontosCursos: d.pontos.cursos,
     diasExperiencia: d.pontos.dias, pontosExperiencia: d.pontos.experiencia,
-    pontosTotal: d.pontos.total, diasOutro: d.diasOutro
+    pontosTotal: d.pontos.total
   };
   const assinatura = JSON.stringify(payload);
   // Mesmos dados já registrados nesta página: reaproveita o número, sem criar outro registro
@@ -1102,14 +1098,12 @@ function gerarPdf(d, numero) {
 
   negrito("Para fins de desempate.", L, 202);
   normal("Informações referentes aos critérios de desempate de acordo com o item 7 do EDITAL 01/2026.", L, 207, undefined, 9);
-  doc.rect(L, 210, W, 30);
+  doc.rect(L, 210, W, 21);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   const l1 = doc.splitTextToSize("Tempo de serviço no cargo de Assistente Educacional (de acordo com a listagem): " + d.diasEF + " dias.", W - 6);
   doc.text(l1, L + 3, 216);
-  const l2 = doc.splitTextToSize("Tempo de serviço a mais como Assistente Educacional, em outro local (a comprovar com certidão): " + d.diasOutro + " dias.", W - 6);
-  doc.text(l2, L + 3, 223);
-  doc.text("Idade em " + CONFIG.dataCorte + ": " + d.idade + ".", L + 3, 234);
+  doc.text("Idade em " + CONFIG.dataCorte + ": " + d.idade + ".", L + 3, 225);
 
   /* Pontuação total */
   doc.setFont("helvetica", "italic");
