@@ -112,6 +112,12 @@ input[type=checkbox] { width: auto; }
                   border-radius: 99px; box-shadow: 0 2px 6px rgba(232,24,32,.35); }
     .btn-edital:hover { filter: brightness(0.92); }
     .btn-gerar:disabled { opacity: .6; cursor: wait; }
+    .btn-gerar.bloqueado { background: #8d99a8; opacity: 1; cursor: not-allowed; pointer-events: none; }
+    .faixa-inscricao { margin: 0 0 20px; padding: 16px 18px; border-radius: 12px; text-align: center; color: #fff; }
+    .faixa-inscricao strong { display: block; font-size: 20px; letter-spacing: .6px; }
+    .faixa-inscricao span { display: block; margin-top: 4px; font-size: 13.5px; }
+    .faixa-inscricao.fechada { background: #c4161c; }
+    .faixa-inscricao.aberta { background: #1f8a5b; }
     .atestado-aviso { margin: 0 0 14px; padding: 10px 12px; font-size: 13px; background: #fff8e1;
                       border: 1px solid #f1dc9a; border-radius: 10px; }
     .atestado-titulo { margin: 0 0 6px; text-align: center; font-weight: bold; font-size: 14px; }
@@ -160,6 +166,7 @@ input[type=checkbox] { width: auto; }
 </header>
 
 <div class="wrap">
+  <div id="faixaInscricao" class="faixa-inscricao fechada" role="status"></div>
   <form id="form" novalidate>
 
     <!-- ===================== ANEXO I ===================== -->
@@ -858,6 +865,15 @@ function aplicarJanela() {
   const st = statusJanela();
   const aviso = $("avisoJanela");
   $("btnGerar").disabled = enviando || st !== "aberta";
+  $("btnGerar").classList.toggle("bloqueado", st !== "aberta");
+  const faixa = $("faixaInscricao");
+  const periodo = "Período de inscrições: de 25/11/2026, às 08h, a 26/11/2026, às 18h (horário de Brasília).";
+  faixa.className = "faixa-inscricao " + (st === "aberta" ? "aberta" : "fechada");
+  faixa.innerHTML = st === "aberta"
+    ? "<strong>INSCRIÇÕES ABERTAS</strong><span>" + periodo + "</span>"
+    : st === "antes"
+      ? "<strong>INSCRIÇÕES AINDA NÃO ABERTAS</strong><span>" + periodo + "</span>"
+      : "<strong>INSCRIÇÕES ENCERRADAS</strong><span>O prazo de inscrições terminou em 26/11/2026, às 18h (horário de Brasília).</span>";
   if (st === "antes") {
     aviso.className = "status falha";
     aviso.textContent = "As inscrições abrem em 25/11/2026, às 08h (horário de Brasília). Você já pode ler o edital e conferir o formulário, mas só poderá gerar a ficha a partir dessa data.";
